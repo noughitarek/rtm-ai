@@ -51,28 +51,28 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
     };
 
     return (<>
-        <Head title="Entrées" />
+        <Head title="Porgrams" />
         <Webmaster
             user={auth.user}
             menu={auth.menu}
-            breadcrumb={<li className="breadcrumb-item active" aria-current="page">Entrées</li>}
+            breadcrumb={<li className="breadcrumb-item active" aria-current="page">Porgrams</li>}
         >
-        <Page title="Entrées" header={<></>}>
+        <Page title="Porgrams" header={<></>}>
             <div className="grid grid-cols-12 gap-6 mt-8">
                 <div className="col-span-12 lg:col-span-3 2xl:col-span-2">
                     <h2 className="intro-y text-lg font-medium mr-auto mt-2">Rubriques</h2>
                     <div className="intro-y box bg-primary p-5 mt-6">
                         <div className="dark:border-darkmode-400 text-white">
-                            {inbounds.map(inbound=>{
-                                const isActive = activeInbound && inbound.rubrique === activeInbound.rubrique;
+                            {groups.map(group=>{
+                                const isActive = activeGroup && group.id === activeGroup.id;
                                 return (
                                     <Button
-                                        key={inbound.rubrique.name}
-                                        onClick={() => handleRubriqueChange(inbound.rubrique)}
+                                        key={group.name}
+                                        onClick={(event) => handleDeleteGroupClick(event, group.id)}
                                         className={`flex items-center px-3 py-2 rounded-md mt-2 ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
                                     >
                                         <Blocks className='w-4 h-4 mr-2' />
-                                        {inbound.rubrique.name}
+                                        {group.name}
                                     </Button>
                                 );
                             })}

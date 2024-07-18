@@ -26,5 +26,6 @@ export interface User{
 }
 
 export interface ProgramsGroup{
-    
+    id: number;
+    name: string;
 }
