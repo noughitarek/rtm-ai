@@ -11,8 +11,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ menuItems }) => {
     return (
         <nav className="side-nav">
             <Link href="/" className="intro-x flex items-center pl-5 pt-4 mt-3">
-                <img alt="Midone - HTML Admin Template" className="w-6" src="/dist/images/stock.png" />
-                <span className="hidden xl:block text-white text-lg ml-3"> Inventaire </span>
+                <img alt="Midone - HTML Admin Template" className="w-full" src="/dist/images/rtm_text.png" />
             </Link>
             <div className="side-nav__divider my-6"></div>
             <ul>

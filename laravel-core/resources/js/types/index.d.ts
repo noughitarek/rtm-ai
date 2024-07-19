@@ -29,3 +29,29 @@ export interface ProgramsGroup{
     id: number;
     name: string;
 }
+export interface Template{
+    id: number;
+    name: string;
+    description: string;
+    group: TemplatesGroup;
+    stringphotos: string;
+    stringvideos: string;
+    stringaudios: string;
+    photos: string[];
+    videos: string[];
+    audios: string[];
+    message: string;
+    total_used: number;
+    total_orders: number;
+    total_responses: number;
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+export interface TemplatesGroup{
+    id: number;
+    name: string;
+    description: string;
+    templates: Template[];
+}

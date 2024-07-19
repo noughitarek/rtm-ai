@@ -15,7 +15,7 @@ const MobileMenu:React.FC<MobileMenuProps> = ({menuItems}) => {
         <div className={"mobile-menu md:hidden " + (menuActive ? "mobile-menu--active" : "")}>
             <div style={{marginTop: "-4.5rem"}} className="mobile-menu-bar">
                 <Link href="/" className="flex mr-auto">
-                    <img alt="Midone - HTML Admin Template" className="w-6" src="/dist/images/stock.png"/>
+                    <img className="mt-4 ms-4 w-1/3" src="/dist/images/rtm.png"/>
                 </Link>
                 <Button className="mobile-menu-toggler" onClick={()=>setMenuActive(true)}> <BarChart2Icon className="w-8 h-8 text-white transform -rotate-90"/> </Button>
             </div>
@@ -38,7 +38,7 @@ const MobileMenu:React.FC<MobileMenuProps> = ({menuItems}) => {
                                 <div className="menu__title"> {menuItem.content} </div>
                             </Link>
                         ) : menuItem.type === 'divider' ? (
-                            <li className="menu__devider my-6"></li>
+                            <div  className="menu__devider my-6"></div >
                         ) : menuItem.sublinks ? (
                             <>
                                 {menuItem.route && (

@@ -4,22 +4,33 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\StockController;
-use App\Http\Controllers\InboundController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\OutboundController;
-use App\Http\Controllers\RubriqueController;
-use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TemplatesGroupController;
+
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    
+    Route::post('templates/{template}', [TemplateController::class, 'update'])->name('templates.update');
+    Route::resource('templates', TemplateController::class)->names([
+        'index' => 'templates.index',
+        'create' => 'templates.create',
+        'store' => 'templates.store',
+        'edit' => 'templates.edit',
+        'destroy' => 'templates.destroy',
+    ])->except(['update']); 
 
-    Route::get('stock', [StockController::class, 'index'])->name('stock.index');
+    Route::resource('templates/groups', TemplatesGroupController::class)->names([
+        'create' => 'templates.groups.create',
+        'store' => 'templates.groups.store',
+        'edit' => 'templates.groups.edit',
+        'update' => 'templates.groups.update',
+        'destroy' => 'templates.groups.destroy',
+    ]);
 
     Route::resource('users', UserController::class)->names([
         'index' => 'users.index',
