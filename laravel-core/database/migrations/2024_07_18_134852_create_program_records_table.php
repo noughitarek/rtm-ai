@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             
             $table->foreignId('template_id')->nullable()->constrained('templates');
-            $table->foreignId('program_id')->nullable()->constrained('programs')->onDelete('cascade');
+            $table->foreignId('program_id')->constrained('programs')->onDelete('cascade');
             $table->integer('send_after')->default(0);
 
             $table->timestamps();

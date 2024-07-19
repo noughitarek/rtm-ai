@@ -5,42 +5,56 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProgramsGroupController;
 use App\Http\Controllers\TemplatesGroupController;
 
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('templates')->name('templates.')->group(function() {
+        Route::prefix('groups')->name('groups.')->group(function() {
+            Route::get('/create', [TemplatesGroupController::class, 'create'])->name('create');
+            Route::post('/create', [TemplatesGroupController::class, 'store'])->name('store');
+            Route::get('/{group}/edit', [TemplatesGroupController::class, 'edit'])->name('edit');
+            Route::put('/{group}/update', [TemplatesGroupController::class, 'update'])->name('update');
+            Route::delete('/{group}/delete', [TemplatesGroupController::class, 'destroy'])->name('destroy');
+        });
     
-    Route::post('templates/{template}', [TemplateController::class, 'update'])->name('templates.update');
-    Route::resource('templates', TemplateController::class)->names([
-        'index' => 'templates.index',
-        'create' => 'templates.create',
-        'store' => 'templates.store',
-        'edit' => 'templates.edit',
-        'destroy' => 'templates.destroy',
-    ])->except(['update']); 
+        Route::get('/', [TemplateController::class, 'index'])->name('index');
+        Route::get('/create', [TemplateController::class, 'create'])->name('create');
+        Route::post('/create', [TemplateController::class, 'store'])->name('store');
+        Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
+        Route::post('/{template}/update', [TemplateController::class, 'update'])->name('update');
+        Route::delete('/{template}/delete', [TemplateController::class, 'destroy'])->name('destroy');
+    });
 
-    Route::resource('templates/groups', TemplatesGroupController::class)->names([
-        'create' => 'templates.groups.create',
-        'store' => 'templates.groups.store',
-        'edit' => 'templates.groups.edit',
-        'update' => 'templates.groups.update',
-        'destroy' => 'templates.groups.destroy',
-    ]);
+    Route::prefix('programs')->name('programs.')->group(function() {
+        Route::prefix('groups')->name('groups.')->group(function() {
+            Route::get('/create', [ProgramsGroupController::class, 'create'])->name('create');
+            Route::post('/create', [ProgramsGroupController::class, 'store'])->name('store');
+            Route::get('/{group}/edit', [ProgramsGroupController::class, 'edit'])->name('edit');
+            Route::put('/{group}/update', [ProgramsGroupController::class, 'update'])->name('update');
+            Route::delete('/{group}/delete', [ProgramsGroupController::class, 'destroy'])->name('destroy');
+        });
+    
+        Route::get('/', [ProgramController::class, 'index'])->name('index');
+        Route::get('/create', [ProgramController::class, 'create'])->name('create');
+        Route::post('/create', [ProgramController::class, 'store'])->name('store');
+        Route::get('/{program}/edit', [ProgramController::class, 'edit'])->name('edit');
+        Route::post('/{program}/update', [ProgramController::class, 'update'])->name('update');
+        Route::delete('/{program}/delete', [ProgramController::class, 'destroy'])->name('destroy');
+    });
+    
 
-    Route::resource('users', UserController::class)->names([
-        'index' => 'users.index',
-        'create' => 'users.create',
-        'store' => 'users.store',
-        'show' => 'users.show',
-        'edit' => 'users.edit',
-        'update' => 'users.update',
-        'destroy' => 'users.destroy',
-    ]);
+
+
+
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
 });
 

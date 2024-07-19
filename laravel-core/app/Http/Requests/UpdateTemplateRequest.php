@@ -25,7 +25,7 @@ class UpdateTemplateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'group_id' => 'nullable|exists:templates_groups,id',
+            'group_id' => 'required|exists:templates_groups,id',
             'photo.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'video.*' => 'nullable|file|mimes:mp4,avi,mov,wmv|max:20480',
             'audio.*' => 'nullable|file|mimes:mp3,wav|max:10240',

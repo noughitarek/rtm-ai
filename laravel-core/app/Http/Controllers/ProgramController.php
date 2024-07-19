@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Program;
+use App\Models\ProgramRecord;
 use App\Models\ProgramsGroup;
+use App\Models\TemplatesGroup;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProgramRequest;
 use App\Http\Requests\UpdateProgramRequest;
 
@@ -15,7 +19,7 @@ class ProgramController extends Controller
      */
     public function index()
     {
-        $groups = ProgramsGroup::with("createdBy", "updatedBy", "deletedBy", 'programs')
+        $groups = ProgramsGroup::with("createdBy", "updatedBy", "deletedBy", 'programs.group', 'programs.createdBy', 'programs.updatedBy')
         ->whereNull('deleted_by')
         ->whereNull('deleted_at')
         ->orderBy('id', 'desc')
@@ -34,7 +38,48 @@ class ProgramController extends Controller
      */
     public function create()
     {
-        //
+        $groups = ProgramsGroup::with("createdBy", "updatedBy", "deletedBy", 'programs.group', 'programs.createdBy', 'programs.updatedBy')
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+        
+        $templates_groups = TemplatesGroup::with("createdBy", "updatedBy", "deletedBy", 'templates.group', 'templates.createdBy', 'templates.updatedBy')
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
+        foreach ($templates_groups as &$group) {
+            foreach ($group['templates'] as &$template) {
+                $template['stringphotos'] = $template['photos'];
+                $template['stringvideos'] = $template['videos'];
+                $template['stringaudios'] = $template['audios'];
+
+                $template['photos'] = $this->convertStringToArray($template['photos']);
+                $template['videos'] = $this->convertStringToArray($template['videos']);
+                $template['audios'] = $this->convertStringToArray($template['audios']);
+            }
+        }
+        
+        return Inertia::render('Programs/CreateProgram', [
+            'groups' => $groups,
+            'templates_groups' => $templates_groups,
+        ]);
+    }
+
+    /**
+     * Splits a comma-separated string of file paths into an array of individual file paths.
+     *
+     * @param string $filePathsString Comma-separated string of file paths.
+     * @return array Array of trimmed, non-empty file paths.
+     */
+    private function convertStringToArray($filePathsString)
+    {
+        $filePaths = explode(',', $filePathsString);
+        $filePaths = array_map('trim', $filePaths);
+        $filePaths = array_filter($filePaths);
+        return $filePaths;
     }
 
     /**
@@ -42,15 +87,26 @@ class ProgramController extends Controller
      */
     public function store(StoreProgramRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Program $program)
-    {
-        //
+        $program = Program::create([
+            "name" => $request->input('name'),
+            "description" => $request->input('description'),
+            "group_id" => $request->input('group_id'),
+            "reuse_after" => $request->input('reuse_after')*$request->input('unit_of_time'),
+            "created_by" => Auth::user()->id,
+        ]);
+        foreach($request->input('program_records') as $record)
+        {
+            ProgramRecord::create([
+                "template_id" => $record['template'],
+                "program_id" => $program->id ,
+                "send_after" => $record['send_after']*$record['unit_of_time']
+            ]);
+        }
+        if ($program) {
+            return redirect()->route('programs.index')->with('success', 'Program created successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Program could not be created.');
+        }
     }
 
     /**
@@ -58,7 +114,24 @@ class ProgramController extends Controller
      */
     public function edit(Program $program)
     {
-        //
+        $groups = ProgramsGroup::with("createdBy", "updatedBy", "deletedBy", 'programs.group', 'programs.createdBy', 'programs.updatedBy')
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get();
+        $programRecords = ProgramRecord::where('program_id', $program->id)
+            ->get()
+            ->groupBy('program_id');
+
+        foreach ($groups as $group) {
+            foreach ($group->programs as $prgm) {
+                $prgm->program_records = $programRecords->get($prgm->id, collect());
+            }
+        }
+        $program->group = $program->group_id ? ProgramsGroup::find($program->group_id) : null;
+
+
+        return Inertia::render('Programs/EditProgram', ['program' => $program, 'groups' => $groups]);
     }
 
     /**
@@ -66,7 +139,27 @@ class ProgramController extends Controller
      */
     public function update(UpdateProgramRequest $request, Program $program)
     {
-        //
+        $program->update([
+            "name" => $request->input('name'),
+            "description" => $request->input('description'),
+            "group_id" => $request->input('group_id'),
+            "reuse_after" => $request->input('reuse_after'),
+            "updated_by" => Auth::user()->id,
+        ]);
+        ProgramRecord::where('program_id', $program->id)->delete();
+        foreach($request->input('program_records') as $record)
+        {
+            ProgramRecord::create([
+                "template_id" => $record->input('template'),
+                "program_id" => $program->id ,
+                "send_after" => $record->input('send_after')*$record->input('unit_of_time')
+            ]);
+        }
+        if ($program->wasChanged()) {
+            return redirect()->route('programs.index')->with('success', 'Program updated successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Program could not be updated.');
+        }
     }
 
     /**
@@ -74,6 +167,14 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        //
+        $program->update([
+            'deleted_by' => Auth::user()->id,
+            'deleted_at' => now(),
+        ]);
+        if ($program->wasChanged()) {
+            return redirect()->route('programs.index')->with('success', 'Program deleted successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Program could not be deleted.');
+        }
     }
 }

@@ -55,3 +55,32 @@ export interface TemplatesGroup{
     description: string;
     templates: Template[];
 }
+export interface Program{
+    id: number;
+    name: string;
+    description: string;
+    group: ProgramsGroup;
+    reuse_after: number;
+    records: ProgramRecord[];
+    total_used: number;
+    total_orders: number;
+    total_responses: number;
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+export interface ProgramsGroup{
+    id: number;
+    name: string;
+    description: string;
+    programs: Program[];
+    records: ProgramRecord[];
+}
+export interface ProgramRecord{
+    id: number;
+    template_group?: number; 
+    template?: number; 
+    send_after: number;
+    unit_of_time: number;
+}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProgramsGroupRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateProgramsGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->Has_Permissions('edit_programs_groups');
     }
 
     /**
@@ -22,7 +23,8 @@ class UpdateProgramsGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string',
+            'description' => 'nullable|string',
         ];
     }
 }

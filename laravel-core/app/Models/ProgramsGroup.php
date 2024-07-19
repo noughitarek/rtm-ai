@@ -23,6 +23,9 @@ class ProgramsGroup extends Model
     }
     public function programs()
     {
-        return $this->hasMany(Program::class, 'group_id');
+        return $this->hasMany(Program::class, 'group_id')
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderby('id', 'desc');
     }
 }
