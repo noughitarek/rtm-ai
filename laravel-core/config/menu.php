@@ -11,7 +11,7 @@ return array(
     array(
         "type" => "link",
         "content" => "Pages",
-        "active_when" => [],
+        "active_when" => ["App\Http\Controllers\PageController#"],
         "route" => "/pages",
         "icon" => array("type" => "lucide", "content" => "Facebook"),
     ),

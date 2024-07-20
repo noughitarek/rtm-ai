@@ -62,6 +62,7 @@ class ScrapeConversations extends Command
 
             if(isset($responseData['data'])){
                 $started_at = $ended_at = $last_from_page_at = $last_from_user_at = $last_from = null;
+                $total_user_messages = $total_page_messages = 0;
 
                 foreach($responseData['data'] as $conversation){
                     $messages = [];
@@ -87,9 +88,13 @@ class ScrapeConversations extends Command
 
                         
                         if ($message['from']['id'] == $page->facebook_page_id){
+                            $total_page_messages++;
+
                             if (is_null($last_from_page_at) || $createdTime > $last_from_page_at)
                                 $last_from_page_at = $createdTime;
                         } else {
+                            $total_user_messages++;
+
                             if (is_null($last_from_user_at) || $createdTime > $last_from_user_at)
                                 $last_from_user_at = $createdTime;
                         }
@@ -107,6 +112,8 @@ class ScrapeConversations extends Command
                         "ended_at" => $ended_at,
                         "last_from_page_at" => $last_from_page_at,
                         "last_from_user_at" => $last_from_user_at,
+                        "total_user_messages" => $total_user_messages,
+                        "total_page_messages" => $total_page_messages,
                     );
 
                     FacebookConversation::createOrUpdate($conversationData);

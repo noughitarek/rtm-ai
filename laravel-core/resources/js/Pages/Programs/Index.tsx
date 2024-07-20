@@ -8,7 +8,6 @@ import { Button } from '@headlessui/react';
 import DeleteModal from '@/Components/DeleteModal';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
-
 import { toast } from 'react-toastify';
 
 const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, to:number, total:number }>> = ({ auth, groups, from, to, total }) => {

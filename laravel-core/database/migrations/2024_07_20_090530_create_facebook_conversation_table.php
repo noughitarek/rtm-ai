@@ -26,9 +26,12 @@ return new class extends Migration
             $table->string('last_from');
 
             $table->timestamp('started_at');
-            $table->timestamp('ended_at')->nullable();;
-            $table->timestamp('last_from_page_at')->nullable();;
-            $table->timestamp('last_from_user_at')->nullable();;
+            $table->timestamp('ended_at')->nullable();
+            $table->timestamp('last_from_page_at')->nullable();
+            $table->timestamp('last_from_user_at')->nullable();
+            
+            $table->integer('total_user_messages')->nullable()->default(0);
+            $table->integer('total_page_messages')->nullable()->default(0);
 
             $table->timestamps();
         });

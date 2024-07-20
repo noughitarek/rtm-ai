@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\TemplatesGroupController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
 
     Route::prefix('templates')->name('templates.')->group(function() {
         Route::prefix('groups')->name('groups.')->group(function() {

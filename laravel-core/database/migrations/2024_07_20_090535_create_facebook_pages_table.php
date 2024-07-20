@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('facebook_pages', function (Blueprint $table) {
             $table->id();
-            $table->string('facebook_page_id')->unique();
+            $table->string('facebook_page_id')->unique()->index();
+            
+            $table->integer('total_user_messages')->nullable()->default(0);
+            $table->integer('total_page_messages')->nullable()->default(0);
+            $table->integer('total_conversations')->nullable()->default(0);
+            $table->integer('total_orders')->nullable()->default(0);
 
             $table->string('name')->nullable();
             $table->string('type');

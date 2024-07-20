@@ -84,3 +84,18 @@ export interface ProgramRecord{
     send_after: number;
     unit_of_time: number;
 }
+
+export interface Page{
+    id: number;
+    facebook_page_id: string;
+    name: string;
+    type: string;
+    
+    total_user_messages: number;
+    total_page_messages: number;
+    total_conversations: number;
+    total_orders: number;
+    
+    expired_at: Date;
+    created_at: Date;
+}
