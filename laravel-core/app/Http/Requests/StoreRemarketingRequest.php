@@ -25,6 +25,7 @@ class StoreRemarketingRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
+            "category" => 'required|exists:remarketings_categories,id',
             "facebook_page_id" => 'required|exists:facebook_pages,id',
             "programs_group_id" => 'required|exists:programs_groups,id',
             "templates_group_id" => 'required|exists:templates_groups,id',

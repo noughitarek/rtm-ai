@@ -103,9 +103,23 @@ export interface Page{
 export interface Remarketing{
     id: number;
     name: string;
+    description: string;
     facebook_page: Page;
     programs_group: ProgramsGroup;
     templates_group: TemplatesGroup;
+    category: RemarketingsCategory;
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+
+export interface RemarketingsCategory{
+    id: number;
+    name: string;
+    description: string;
+    remarketings: Remarketing[];
     created_at: Date;
     updated_at: Date;
     created_by: User;

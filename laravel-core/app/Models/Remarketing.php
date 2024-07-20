@@ -11,6 +11,7 @@ class Remarketing extends Model
 
     protected $fillable = [
         "name",
+        "category",
         "facebook_page_id", 
         "programs_group_id", 
         "templates_group_id", 
@@ -31,6 +32,10 @@ class Remarketing extends Model
     public function deletedBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+    public function category()
+    {
+        return $this->belongsTo(RemarketingsCategory::class, 'category');
     }
 
     public function templatesGroup()

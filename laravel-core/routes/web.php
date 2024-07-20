@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\ProgramsGroupController;
 use App\Http\Controllers\TemplatesGroupController;
+use App\Http\Controllers\RemarketingsCategoryController;
 
 
 
@@ -53,6 +54,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{program}/delete', [ProgramController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('remarketings')->name('remarketings.')->group(function() {
+        Route::prefix('categories')->name('categories.')->group(function() {
+            Route::get('/create', [RemarketingsCategoryController::class, 'create'])->name('create');
+            Route::post('/create', [RemarketingsCategoryController::class, 'store'])->name('store');
+            Route::get('/{category}/edit', [RemarketingsCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{category}/update', [RemarketingsCategoryController::class, 'update'])->name('update');
+            Route::delete('/{category}/delete', [RemarketingsCategoryController::class, 'destroy'])->name('destroy');
+        });
+    
         Route::get('/', [RemarketingController::class, 'index'])->name('index');
         Route::get('/create', [RemarketingController::class, 'create'])->name('create');
         Route::post('/create', [RemarketingController::class, 'store'])->name('store');

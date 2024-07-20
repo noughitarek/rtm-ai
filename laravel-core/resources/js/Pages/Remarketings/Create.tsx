@@ -1,6 +1,6 @@
 
 import React, {useEffect, useState, ChangeEvent} from 'react';
-import { Page as PageType, PageProps, ProgramsGroup, Remarketing, TemplatesGroup } from '@/types';
+import { Page as PageType, PageProps, ProgramsGroup, Remarketing, TemplatesGroup, RemarketingsCategory } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
@@ -15,16 +15,18 @@ import CustomSelect from '@/Base-components/Forms/CustomSelect';
 interface GroupFormData {
     name: string;
     description: string;
+    category: number;
     programs_group_id: number;
     templates_group_id: number;
     facebook_page_id: number;
 }
 
-const CreateRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[], templatesGroup: TemplatesGroup[], pages: PageType[]}>> = ({ auth, programsGroup, templatesGroup, pages }) => {
+const CreateRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[], categories: RemarketingsCategory[],templatesGroup: TemplatesGroup[], pages: PageType[]}>> = ({ auth, categories, programsGroup, templatesGroup, pages }) => {
 
     const remarketingsGroupForm = useForm<GroupFormData>({
         name: '',
         description: '',
+        category: 0,
         programs_group_id: 0,
         templates_group_id: 0,
         facebook_page_id: 0
@@ -39,7 +41,6 @@ const CreateRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[
     }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(remarketingsGroupForm.data)
         setCreating(true);
         
         remarketingsGroupForm.post(route('remarketings.store'), {
@@ -71,6 +72,7 @@ const CreateRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[
         <Page title="Create a remarketing" header={<></>}>
             <Grid title="Remarketing information" header={<>{createButton}</>}>
                 <CustomTextInput title="Name" value={remarketingsGroupForm.data.name} name='name' description='Enter the name of the remarketing' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomSelect title="Category" value={remarketingsGroupForm.data.category} elements={categories} name='category' description='Enter the category you want to affect the remarketing to' required={true} handleChange={handleChange} instructions='Required'/>                
                 <CustomTextarea title="Description" value={remarketingsGroupForm.data.description} name='description' description='Enter the description of the remarketing' required={false} handleChange={handleChange} instructions='Not required'/>
             </Grid>
             <Grid title="Remarketing details">
