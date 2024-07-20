@@ -17,14 +17,18 @@ class Program extends Model
     }
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'updated_by')->withDefault();
+        return $this->belongsTo(User::class, 'updated_by');
     }
     public function deletedBy()
     {
-        return $this->belongsTo(User::class, 'deleted_by')->withDefault();
+        return $this->belongsTo(User::class, 'deleted_by');
     }
     public function group()
     {
-        return $this->belongsTo(ProgramsGroup::class, 'group_id')->withDefault();
+        return $this->belongsTo(ProgramsGroup::class, 'group_id');
+    }
+    public function records()
+    {
+        return $this->hasMany(ProgramRecord::class, 'program_id')->orderby('id', 'asc');
     }
 }

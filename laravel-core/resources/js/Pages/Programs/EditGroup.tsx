@@ -59,7 +59,7 @@ const EditProgramsGroup: React.FC<PageProps<{ group: ProgramsGroup}>> = ({ auth,
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('programs.index')}>Programs</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Groups</li>
-                <li className="breadcrumb-item" aria-current="page">{group.id}</li>
+                <li className="breadcrumb-item" aria-current="page">{group.name}</li>
                 <li className="breadcrumb-item active" aria-current="page">Edit</li>
             </>}
         >

@@ -25,9 +25,9 @@ class StoreProgramRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
-            'group_id' => 'required|exists:templates_groups,id',
+            'group_id' => 'required|exists:programs_groups,id',
             'reuse_after' => 'nullable|integer',
-            'unit_of_time' => 'nullable|integer|in:60,3600,86400',
+            'unit_of_time' => 'nullable|integer|in:0,1,60,3600,86400',
             'program_records' => 'array'
         ];
     }

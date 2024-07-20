@@ -15,14 +15,14 @@ class Template extends Model
     }
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'updated_by')->withDefault();
+        return $this->belongsTo(User::class, 'updated_by');
     }
     public function deletedBy()
     {
-        return $this->belongsTo(User::class, 'deleted_by')->withDefault();
+        return $this->belongsTo(User::class, 'deleted_by');
     }
     public function group()
     {
-        return $this->belongsTo(TemplatesGroup::class, 'group_id')->withDefault();
+        return $this->belongsTo(TemplatesGroup::class, 'group_id');
     }
 }

@@ -97,9 +97,9 @@ class ProgramController extends Controller
         foreach($request->input('program_records') as $record)
         {
             ProgramRecord::create([
-                "template_id" => $record['template'],
+                "template_id" => $record['template']==0?null:$record['template'],
                 "program_id" => $program->id ,
-                "send_after" => $record['send_after']*$record['unit_of_time']
+                "send_after" => $record['send_after']*($record['unit_of_time']??1)
             ]);
         }
         if ($program) {
@@ -114,24 +114,21 @@ class ProgramController extends Controller
      */
     public function edit(Program $program)
     {
+        $program = Program::with('records.template', 'records.group', 'group')->find($program->id)->toArray();
+        
+        $templates_groups = TemplatesGroup::with("createdBy", "updatedBy", "deletedBy", 'templates.group', 'templates.createdBy', 'templates.updatedBy')
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
         $groups = ProgramsGroup::with("createdBy", "updatedBy", "deletedBy", 'programs.group', 'programs.createdBy', 'programs.updatedBy')
         ->whereNull('deleted_by')
         ->whereNull('deleted_at')
         ->orderBy('id', 'desc')
         ->get();
-        $programRecords = ProgramRecord::where('program_id', $program->id)
-            ->get()
-            ->groupBy('program_id');
 
-        foreach ($groups as $group) {
-            foreach ($group->programs as $prgm) {
-                $prgm->program_records = $programRecords->get($prgm->id, collect());
-            }
-        }
-        $program->group = $program->group_id ? ProgramsGroup::find($program->group_id) : null;
-
-
-        return Inertia::render('Programs/EditProgram', ['program' => $program, 'groups' => $groups]);
+        return Inertia::render('Programs/EditProgram', ['program' => $program, 'groups' => $groups, 'templates_groups' => $templates_groups]);
     }
 
     /**
@@ -149,10 +146,21 @@ class ProgramController extends Controller
         ProgramRecord::where('program_id', $program->id)->delete();
         foreach($request->input('program_records') as $record)
         {
+            if(isset($record['template'])){
+                if(is_array($record['template'])){
+                    $template = $record['template']['id'];
+                }elseif($record['template'] != 0){
+                    $template = $record['template'];
+                }else{
+                    $template = null;
+                }
+            }else{
+                $template = null;
+            }
             ProgramRecord::create([
-                "template_id" => $record->input('template'),
+                "template_id" => $template,
                 "program_id" => $program->id ,
-                "send_after" => $record->input('send_after')*$record->input('unit_of_time')
+                "send_after" => ($record['send_after'] ?? 0) * ($record['unit_of_time'] ?? 1),
             ]);
         }
         if ($program->wasChanged()) {

@@ -38,6 +38,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
     };
 
     const timesUnites = [
+        { id: 1, name: 'Seconds' }, 
         { id: 60, name: 'Minutes' }, 
         { id: 3600, name: 'Hours' }, 
         { id: 86400, name: 'Days' }
@@ -68,7 +69,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
         const moreProgramRecords: ProgramRecord[] = [
             {
                 id: Date.now(),
-                template_group: 0,
+                group: 0,
                 template: 0,
                 send_after: 0,
                 unit_of_time: 0,
@@ -151,7 +152,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                             value={programForm.data.reuse_after}
                             name='reuse_after'
                             description='Enter the time you want to reuse the program after'
-                            required={true}
+                            required={false}
                             handleChange={handleChange}
                             instructions='Required'
                         />
@@ -161,9 +162,9 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                             value={programForm.data.unit_of_time}
                             name='unit_of_time'
                             description='Enter the unit of time'
-                            required={true}
+                            required={false}
                             handleChange={handleChange}
-                            instructions='Required'
+                            instructions='Not required'
                         />
                     </Grid>
                     <Grid title="Program's schedule" header={<Button className="btn btn-primary" onClick={moreRecords}>More records</Button>}>
@@ -185,6 +186,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1">
                                     <input
                                         type="number"
+                                        required
                                         className="form-control"
                                         value={program.send_after || ''}
                                         onChange={(e) => handleRecordChange(index, 'send_after', +e.target.value)}
@@ -195,6 +197,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                     <select
                                         className="form-control"
                                         value={program.unit_of_time || ''}
+                                        required
                                         onChange={(e) => handleRecordChange(index, 'unit_of_time', +e.target.value)}
                                     >
                                         <option value="">Select the unit of time</option>
@@ -207,8 +210,8 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select
                                         className="form-control"
-                                        value={program.template_group || ''}
-                                        onChange={(e) => handleRecordChange(index, 'template_group', +e.target.value)}
+                                        value={typeof program.group === 'number' ? program.group : program.group?.id || ''}
+                                        onChange={(e) => handleRecordChange(index, 'group', +e.target.value)}
                                     >
                                         <option value="">Select the group of templates</option>
                                         {templates_groups.map(group => (
@@ -220,12 +223,12 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select
                                         className="form-control"
-                                        value={program.template || ''}
+                                        value={typeof program.template === 'number' ? program.template : program.template?.id || ''}
                                         onChange={(e) => handleRecordChange(index, 'template', +e.target.value)}
                                     >
                                         <option value="">Select the templates</option>
                                         {templates_groups
-                                            .find(group => group.id === program.template_group)?.templates
+                                            .find(group => group.id === program.group)?.templates
                                             .map(template => (
                                                 <option key={template.id} value={template.id}>{template.name}</option>
                                             ))}
@@ -237,6 +240,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 </div>
                             </div>
                         ))}
+                        {saveButton}
                     </Grid>
                 </Page>
             </Webmaster>

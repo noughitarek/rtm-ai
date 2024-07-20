@@ -21,16 +21,21 @@ interface ProgramFormData {
     program_records: ProgramRecord[];
 }
 
-const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_groups: TemplatesGroup[], program: Program }>> = ({ auth, groups, templates_groups, program }) => {
+const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_groups: TemplatesGroup[], program: Program }>> = ({ auth, groups, templates_groups, program }) => {
+    console.log(program.records);
+
     const programForm = useForm<ProgramFormData>({
         name: program.name,
         description: program.description,
         group_id: program.group.id,
         reuse_after: program.reuse_after,
-        unit_of_time: 0,
+        unit_of_time: 1,
         program_records: program.records,
     });
-    const [creating, setCreating] = useState(false);
+
+    console.log(programForm.data);
+    
+    const [editing, setEditing] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -38,6 +43,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
     };
 
     const timesUnites = [
+        { id: 1, name: 'Seconds' }, 
         { id: 60, name: 'Minutes' }, 
         { id: 3600, name: 'Hours' }, 
         { id: 86400, name: 'Days' }
@@ -45,20 +51,20 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setCreating(true);
+        setEditing(true);
 
-        programForm.post(route('programs.store'), {
+        programForm.post(route('programs.update', {program: program}), {
             forceFormData: true,
             onSuccess: () => {
-                toast.success('Program has been created successfully');
+                toast.success('Program has been edited successfully');
                 router.get(route('programs.index'));
             },
             onError: (error) => {
-                toast.error('Error creating the program');
+                toast.error('Error editing the program');
                 console.error('Error:', error);
             },
             onFinish: () => {
-                setCreating(false);
+                setEditing(false);
             }
         });
     };
@@ -68,7 +74,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
         const moreProgramRecords: ProgramRecord[] = [
             {
                 id: Date.now(),
-                template_group: 0,
+                group: 0,
                 template: 0,
                 send_after: 0,
                 unit_of_time: 0,
@@ -88,20 +94,28 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
     };
 
     const handleRecordChange = (index: number, field: keyof ProgramRecord, value: any) => {
-        const updatedRecords = [...programForm.data.program_records];
-        updatedRecords[index] = { ...updatedRecords[index], [field]: value };
-        programForm.setData('program_records', updatedRecords);
+        if(field == "group" && value === 0){
+            const updatedRecords = [...programForm.data.program_records];
+            const { template, ...rest } = updatedRecords[index];
+            updatedRecords[index] = { ...rest };
+            updatedRecords[index] = { ...updatedRecords[index], [field]: value };
+            programForm.setData('program_records', updatedRecords);
+        }else{
+            const updatedRecords = [...programForm.data.program_records];
+            updatedRecords[index] = { ...updatedRecords[index], [field]: value };
+            programForm.setData('program_records', updatedRecords);
+        }
     };
 
     const saveButton = (
-        <Button className="btn btn-primary mt-4" disabled={creating} onClick={handleSubmit}>
-            {creating ? "Creating" : "Create"}
+        <Button className="btn btn-primary mt-4" disabled={editing} onClick={handleSubmit}>
+            {editing ? "Editing" : "Edit"}
         </Button>
     );
-
+    console.log(program)
     return (
         <>
-            <Head title="Create a program" />
+            <Head title="Edit a program" />
             <Webmaster
                 user={auth.user}
                 menu={auth.menu}
@@ -110,11 +124,13 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                         <li className="breadcrumb-item" aria-current="page">
                             <Link href={route('programs.index')}>Programs</Link>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Create</li>
+                        <li className="breadcrumb-item" aria-current="page">{program.group.name}</li>
+                        <li className="breadcrumb-item" aria-current="page">{program.name}</li>
+                        <li className="breadcrumb-item active" aria-current="page">Edit</li>
                     </>
                 }
             >
-                <Page title="Create a program" header={<></>}>
+                <Page title="Edit a program" header={<></>}>
                     <Grid title="Program's information" header={saveButton}>
                         <CustomTextInput
                             title="Name"
@@ -194,7 +210,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select
                                         className="form-control"
-                                        value={program.unit_of_time || ''}
+                                        value={1}
                                         onChange={(e) => handleRecordChange(index, 'unit_of_time', +e.target.value)}
                                     >
                                         <option value="">Select the unit of time</option>
@@ -207,8 +223,8 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select
                                         className="form-control"
-                                        value={program.template_group || ''}
-                                        onChange={(e) => handleRecordChange(index, 'template_group', +e.target.value)}
+                                        defaultValue={typeof program.group === 'number' ? program.group : program.group?.id || ''}
+                                        onChange={(e) => handleRecordChange(index, 'group', +e.target.value)}
                                     >
                                         <option value="">Select the group of templates</option>
                                         {templates_groups.map(group => (
@@ -220,12 +236,12 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select
                                         className="form-control"
-                                        value={program.template || ''}
+                                        defaultValue={typeof program.template === 'number' ? program.template : program.template?.id || ''}
                                         onChange={(e) => handleRecordChange(index, 'template', +e.target.value)}
                                     >
                                         <option value="">Select the templates</option>
                                         {templates_groups
-                                            .find(group => group.id === program.template_group)?.templates
+                                            .find(group => group.id === (typeof program.group === 'number' ? program.group : program.group?.id))?.templates
                                             .map(template => (
                                                 <option key={template.id} value={template.id}>{template.name}</option>
                                             ))}
@@ -237,6 +253,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 </div>
                             </div>
                         ))}
+                        {saveButton}
                     </Grid>
                 </Page>
             </Webmaster>
@@ -244,4 +261,4 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
     );
 };
 
-export default CreateProgram;
+export default EditProgram;

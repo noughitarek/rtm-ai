@@ -79,8 +79,8 @@ export interface ProgramsGroup{
 }
 export interface ProgramRecord{
     id: number;
-    template_group?: number; 
-    template?: number; 
+    group?: number | TemplatesGroup;
+    template?: number | Template; 
     send_after: number;
     unit_of_time: number;
 }
