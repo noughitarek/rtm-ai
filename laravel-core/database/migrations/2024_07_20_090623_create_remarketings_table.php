@@ -13,8 +13,19 @@ return new class extends Migration
     {
         Schema::create('remarketings', function (Blueprint $table) {
             $table->id();
+
+            $table->string('name');
+            $table->text('description')->nullable();
+            
+            $table->string('facebook_page_id')->index();
             $table->foreignId('programs_group_id')->constrained('programs_groups');
-            $table->foreignId('templates_groups_id')->constrained('templates_groups');
+            $table->foreignId('templates_group_id')->constrained('templates_groups');
+
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
+            $table->timestamp('deleted_at')->nullable();
+            
             $table->timestamps();
         });
     }

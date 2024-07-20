@@ -55,7 +55,7 @@ const TemplatesIndex: React.FC<PageProps<{ groups: TemplatesGroup[], from:number
     ) 
     : null;
 
-    const lastActivityBy = mostRecentActivity ? mostRecentActivity.updated_by.name : "";
+    const lastActivityBy = mostRecentActivity &&  mostRecentActivity.updated_by? mostRecentActivity.updated_by.name : "";
     const lastActivityAt = mostRecentActivity ? formatTimeDifference(new Date(mostRecentActivity.updated_at).getTime()): "";
 
 

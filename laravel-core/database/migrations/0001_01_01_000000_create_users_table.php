@@ -25,7 +25,6 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
-
             $table->timestamp('deleted_at')->nullable();
             
             $table->rememberToken();

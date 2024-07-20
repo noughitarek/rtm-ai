@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRemarketingRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateRemarketingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->Has_Permissions('edit_remarketings');
     }
 
     /**
@@ -22,7 +23,11 @@ class UpdateRemarketingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            "facebook_page_id" => 'required|exists:facebook_pages,id',
+            "programs_group_id" => 'required|exists:programs_groups,id',
+            "templates_group_id" => 'required|exists:templates_groups,id',
         ];
     }
 }

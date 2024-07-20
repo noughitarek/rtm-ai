@@ -99,3 +99,15 @@ export interface Page{
     expired_at: Date;
     created_at: Date;
 }
+
+export interface Remarketing{
+    id: number;
+    name: string;
+    facebook_page: Page;
+    programs_group: ProgramsGroup;
+    templates_group: TemplatesGroup;
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}

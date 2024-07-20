@@ -93,6 +93,7 @@ class ProgramController extends Controller
             "group_id" => $request->input('group_id'),
             "reuse_after" => $request->input('reuse_after')*$request->input('unit_of_time'),
             "created_by" => Auth::user()->id,
+            "updated_by" => Auth::user()->id,
         ]);
         foreach($request->input('program_records') as $record)
         {

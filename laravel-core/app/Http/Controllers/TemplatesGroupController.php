@@ -31,6 +31,7 @@ class TemplatesGroupController extends Controller
             "total_orders" => 0, 
             "total_responses" => 0, 
             "created_by" => Auth::user()->id,
+            "updated_by" => Auth::user()->id,
         ]);
         if ($group) {
             return redirect()->route('templates.index')->with('success', 'Group of templates created successfully.');

@@ -33,7 +33,7 @@ return array(
     array(
         "type" => "link",
         "content" => "Remarketings",
-        "active_when" => [],
+        "active_when" => ["App\Http\Controllers\RemarketingController#"],
         "route" => "/remarketings",
         "icon" => array("type" => "lucide", "content" => "Volume2"),
     ),

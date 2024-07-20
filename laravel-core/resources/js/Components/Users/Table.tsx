@@ -4,7 +4,7 @@ import Pagination from '@/Base-components/Pagination';
 import { AtSign, Blocks, Calendar, CheckSquare, Hash, MapPin, Phone, Trash2, UserCog, User as UserIcon} from 'lucide-react';
 import { Link, router, useForm } from '@inertiajs/react';
 import { Button } from '@headlessui/react';
-import DeleteModal from '@/Base-components/DeleteModal';
+import DeleteModal from '@/Components/DeleteModal';
 import { toast } from 'react-toastify';
 
 interface PageProps {

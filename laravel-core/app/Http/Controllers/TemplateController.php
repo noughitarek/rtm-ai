@@ -109,7 +109,8 @@ class TemplateController extends Controller
             'videos' => implode(',', $videosPaths),
             'audios' => implode(',', $audiosPaths),
             'message' => $request->input('message'),
-            'created_by' => Auth::user()->id
+            'created_by' => Auth::user()->id,
+            "updated_by" => Auth::user()->id,
         ]);
         if ($template) {
             return redirect()->route('templates.index')->with('success', 'Template created successfully.');
