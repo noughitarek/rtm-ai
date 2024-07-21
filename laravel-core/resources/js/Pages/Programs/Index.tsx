@@ -10,7 +10,7 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
 
-const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, to:number, total:number }>> = ({ auth, groups, from, to, total }) => {
+const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, to:number, total:number }>> = ({ menu, auth, groups, from, to, total }) => {
     const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
     const [isDeletingGroup, setIsDeletingGroup] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -123,7 +123,7 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
         <Head title="Programs" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<li className="breadcrumb-item active" aria-current="page">Programs</li>}
         >
         <Page title="Programs" header={<></>}>

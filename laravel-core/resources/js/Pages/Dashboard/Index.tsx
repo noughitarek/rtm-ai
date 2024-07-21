@@ -2,14 +2,14 @@ import Webmaster from '@/Layouts/Webmaster';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
-export default function Dashboard({ auth }: PageProps) {
+export default function Dashboard({ auth, menu }: PageProps) {
     return (
         <>
             <Head title="Tableau de bord" />
             
             <Webmaster
                 user={auth.user}
-                menu={auth.menu}
+                menu={menu}
                 breadcrumb={<li className="breadcrumb-item active" aria-current="page">Tableau de bord</li>}
             >
               <div className="grid grid-cols-12 gap-6">

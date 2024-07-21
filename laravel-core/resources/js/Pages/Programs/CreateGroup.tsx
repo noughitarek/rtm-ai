@@ -16,7 +16,7 @@ interface GroupFormData {
     description: string;
 }
 
-const CreateProgramsGroup: React.FC<PageProps> = ({ auth }) => {
+const CreateProgramsGroup: React.FC<PageProps> = ({ auth, menu }) => {
 
     const programsGroupForm = useForm<GroupFormData>({
         name: '',
@@ -54,7 +54,7 @@ const CreateProgramsGroup: React.FC<PageProps> = ({ auth }) => {
         <Head title="Create a group of programs" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('programs.index')}>Programs</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Groups</li>

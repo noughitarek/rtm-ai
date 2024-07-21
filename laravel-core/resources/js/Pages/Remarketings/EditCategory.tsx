@@ -16,7 +16,7 @@ interface CategoryFormData {
     description: string;
 }
 
-const EditRemarketingsCategory: React.FC<PageProps<{ category: RemarketingsCategory}>> = ({ auth, category }) => {
+const EditRemarketingsCategory: React.FC<PageProps<{ category: RemarketingsCategory}>> = ({ auth, category, menu }) => {
     const remarketing = useForm<CategoryFormData>({
         name: category.name,
         description: category.description
@@ -54,7 +54,7 @@ const EditRemarketingsCategory: React.FC<PageProps<{ category: RemarketingsCateg
         <Head title="Edit a category of remarketings" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('remarketings.index')}>Remarketings</Link></li>
                 <li className="breadcrumb-item" aria-current="page">categories</li>

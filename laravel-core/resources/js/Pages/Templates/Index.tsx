@@ -11,7 +11,7 @@ import ReactLoading from 'react-loading';
 
 import { toast } from 'react-toastify';
 
-const TemplatesIndex: React.FC<PageProps<{ groups: TemplatesGroup[], from:number, to:number, total:number }>> = ({ auth, groups, from, to, total }) => {
+const TemplatesIndex: React.FC<PageProps<{ groups: TemplatesGroup[], from:number, to:number, total:number }>> = ({ auth, groups, from, to, total, menu }) => {
     const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
     const [isDeletingGroup, setIsDeletingGroup] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -129,7 +129,7 @@ const TemplatesIndex: React.FC<PageProps<{ groups: TemplatesGroup[], from:number
         <Head title="Templates" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<li className="breadcrumb-item active" aria-current="page">Templates</li>}
         >
         <Page title="Templates" header={<></>}>

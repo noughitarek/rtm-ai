@@ -23,7 +23,7 @@ interface TemplateFormData {
     message: string;
 }
 
-const CreateTemplate: React.FC<PageProps<{groups: TemplatesGroup[]}>> = ({ auth, groups }) => {
+const CreateTemplate: React.FC<PageProps<{groups: TemplatesGroup[]}>> = ({ auth, groups, menu }) => {
     const templateForm = useForm<TemplateFormData>({
         name: '',
         description: '',
@@ -81,7 +81,7 @@ const CreateTemplate: React.FC<PageProps<{groups: TemplatesGroup[]}>> = ({ auth,
         <Head title="Create a template" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('templates.index')}>Templates</Link></li>
                 <li className="breadcrumb-item active" aria-current="page">Create</li>

@@ -16,7 +16,7 @@ interface GroupFormData {
     description: string;
 }
 
-const CreateTemplatesGroup: React.FC<PageProps> = ({ auth }) => {
+const CreateTemplatesGroup: React.FC<PageProps> = ({ auth, menu }) => {
 
     const templatesGroupForm = useForm<GroupFormData>({
         name: '',
@@ -54,7 +54,7 @@ const CreateTemplatesGroup: React.FC<PageProps> = ({ auth }) => {
         <Head title="Create a group of templates" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('templates.index')}>Templates</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Groups</li>

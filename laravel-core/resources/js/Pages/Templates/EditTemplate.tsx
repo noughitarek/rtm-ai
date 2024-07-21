@@ -27,7 +27,7 @@ interface TemplateFormData {
     message: string;
 }
 
-const EditTemplate: React.FC<PageProps<{groups: TemplatesGroup[], template: Template}>> = ({ auth, groups, template }) => {
+const EditTemplate: React.FC<PageProps<{groups: TemplatesGroup[], template: Template}>> = ({ auth, groups, template, menu }) => {
     const templateForm = useForm<TemplateFormData>({
         name: template.name,
         description: template.description || '',
@@ -87,7 +87,7 @@ const EditTemplate: React.FC<PageProps<{groups: TemplatesGroup[], template: Temp
         <Head title="Edit a template" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('templates.index')}>Templates</Link></li>
                 <li className="breadcrumb-item" aria-current="page">{template.group.name}</li>

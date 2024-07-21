@@ -21,7 +21,7 @@ interface GroupFormData {
     facebook_page_id: number;
 }
 
-const EditRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[], categories: RemarketingsCategory[], templatesGroup: TemplatesGroup[], pages: PageType[], remarketing: Remarketing}>> = ({ auth, categories, remarketing, programsGroup, templatesGroup, pages }) => {
+const EditRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[], categories: RemarketingsCategory[], templatesGroup: TemplatesGroup[], pages: PageType[], remarketing: Remarketing}>> = ({ auth, categories, remarketing, programsGroup, templatesGroup, pages, menu }) => {
 
     const remarketingsGroupForm = useForm<GroupFormData>({
         name: remarketing.name,
@@ -63,7 +63,7 @@ const EditRemarketingsGroup: React.FC<PageProps<{programsGroup: ProgramsGroup[],
         <Head title="Edit a remarketing" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('remarketings.index')}>Remarketings</Link></li>
                 <li className="breadcrumb-item active" aria-current="page">Edit</li>

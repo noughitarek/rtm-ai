@@ -10,7 +10,7 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
 
-const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[], from:number, to:number, total:number }>> = ({ auth, categories, from, to, total }) => {
+const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[], from:number, to:number, total:number }>> = ({ auth, categories, from, to, total, menu }) => {
     const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
     const [isDeletingCategory, setIsDeletingCategory] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -123,7 +123,7 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
         <Head title="Remarketings" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<li className="breadcrumb-item active" aria-current="page">Remarketings</li>}
         >
         <Page title="Remarketings" header={<></>}>

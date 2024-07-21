@@ -9,12 +9,12 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
 
-const PagesIndex: React.FC<PageProps<{ pages: PageType[], from:number, to:number, total:number }>> = ({ auth, pages, from, to, total }) => {
+const PagesIndex: React.FC<PageProps<{ pages: PageType[], from:number, to:number, total:number }>> = ({ auth, menu, pages, from, to, total }) => {
     return (<>
         <Head title="Pages" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<li className="breadcrumb-item active" aria-current="page">Pages</li>}
         >
             <Page title='Pages' header={<></>}>

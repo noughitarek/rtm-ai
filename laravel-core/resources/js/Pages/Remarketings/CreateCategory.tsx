@@ -16,7 +16,7 @@ interface CategoryFormData {
     description: string;
 }
 
-const CreateRemarketingsCategory: React.FC<PageProps> = ({ auth }) => {
+const CreateRemarketingsCategory: React.FC<PageProps> = ({ auth, menu }) => {
 
     const remarketingsCategoryForm = useForm<CategoryFormData>({
         name: '',
@@ -54,7 +54,7 @@ const CreateRemarketingsCategory: React.FC<PageProps> = ({ auth }) => {
         <Head title="Create a category of remarketings" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('remarketings.index')}>Remarketings</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Categories</li>

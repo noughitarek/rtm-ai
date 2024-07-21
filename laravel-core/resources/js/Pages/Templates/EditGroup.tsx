@@ -16,7 +16,7 @@ interface GroupFormData {
     description: string;
 }
 
-const EditTemplatesGroup: React.FC<PageProps<{ group: TemplatesGroup}>> = ({ auth, group }) => {
+const EditTemplatesGroup: React.FC<PageProps<{ group: TemplatesGroup}>> = ({ auth, group, menu }) => {
 
     const templatesGroupForm = useForm<GroupFormData>({
         name: group.name,
@@ -55,7 +55,7 @@ const EditTemplatesGroup: React.FC<PageProps<{ group: TemplatesGroup}>> = ({ aut
         <Head title="Edit a group of templates" />
         <Webmaster
             user={auth.user}
-            menu={auth.menu}
+            menu={menu}
             breadcrumb={<>
                 <li className="breadcrumb-item" aria-current="page"><Link href={route('templates.index')}>Templates</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Groups</li>

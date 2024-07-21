@@ -21,7 +21,7 @@ interface ProgramFormData {
     program_records: ProgramRecord[];
 }
 
-const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_groups: TemplatesGroup[], program: Program }>> = ({ auth, groups, templates_groups, program }) => {
+const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_groups: TemplatesGroup[], program: Program }>> = ({ menu, auth, groups, templates_groups, program }) => {
     console.log(program.records);
 
     const programForm = useForm<ProgramFormData>({
@@ -118,7 +118,7 @@ const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_group
             <Head title="Edit a program" />
             <Webmaster
                 user={auth.user}
-                menu={auth.menu}
+                menu={menu}
                 breadcrumb={
                     <>
                         <li className="breadcrumb-item" aria-current="page">

@@ -8,7 +8,7 @@ import { Input, Select } from '@headlessui/react';
 import PaginationInfo from '@/Base-components/PaginationInfo';
 import UsersTable from '@/Components/Users/Table';
 
-const Users: React.FC<PageProps<{ users: User[], from:number, to:number, total:number }>> = ({ auth, users, from, to, total }) => {
+const Users: React.FC<PageProps<{ users: User[], from:number, to:number, total:number }>> = ({ auth, menu, users, from, to, total }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(event.target.value);
@@ -18,7 +18,7 @@ const Users: React.FC<PageProps<{ users: User[], from:number, to:number, total:n
             <Head title="Users" />
             <Webmaster
                 user={auth.user}
-                menu={auth.menu}
+                menu={menu}
                 breadcrumb={<li className="breadcrumb-item active" aria-current="page">Users</li>}
             >
                 <Page title="Users" header={<>
