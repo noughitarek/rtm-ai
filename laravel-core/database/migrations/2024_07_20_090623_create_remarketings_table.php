@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('templates_group_id')->constrained('templates_groups');
 
             $table->foreignId('category')->constrained('remarketings_categories');
+            $table->boolean('is_active')->default(false);
 
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');

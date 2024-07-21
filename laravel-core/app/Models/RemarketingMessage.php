@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FacebookPage extends Model
+class RemarketingMessage extends Model
 {
     use HasFactory;
-    protected $fillable = ["facebook_page_id", "name", "access_token", "type", "expired_at"];
+    protected $fillable = ["remarketing", "template", "facebook_conversation", "send_at", "sented_at"];
+
+    
 }

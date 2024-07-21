@@ -19,7 +19,12 @@ use App\Http\Controllers\RemarketingsCategoryController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+
+    Route::prefix('pages')->name('pages.')->group(function() {
+        Route::get('/', [PageController::class, 'index'])->name('index');
+        Route::get('{page}/conversations', [PageController::class, 'conversations'])->name('conversations');
+        Route::get('{page}/conversations/{conversation}/assignments', [PageController::class, 'assignments'])->name('assignments');
+    });
 
     Route::prefix('templates')->name('templates.')->group(function() {
         Route::prefix('groups')->name('groups.')->group(function() {
@@ -77,6 +82,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::post('/{user}/update', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::controller(SettingController::class)->group(function(){
+        Route::get('oauth/facebook', 'redirectToFacebook')->name('facebook_reconnect');
+        Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
+        Route::get('oauth/facebook/logout', 'logout');
     });
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
 });

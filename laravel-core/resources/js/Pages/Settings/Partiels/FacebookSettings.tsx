@@ -1,6 +1,7 @@
 import CustomTextInput from "@/Base-components/Forms/CustomTextInput";
 import { DynamicSetting, PageProps } from "@/types";
-import { Save } from "lucide-react";
+import { Link } from "@inertiajs/react";
+import { Facebook, Save } from "lucide-react";
 
 const FacebookSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) => {
     return (
@@ -15,9 +16,10 @@ const FacebookSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) 
                     </button>
                 </div>
                 <div className="p-5">
-                    <CustomTextInput title="Client id" description="An id for this website" instructions="required" name="settings.id" value={settings.id} handleChange={()=>{}} required={true}/>
-                    <CustomTextInput title="Client secret" description="A title for this website" instructions="required" name="settings.title" value={settings.title} handleChange={()=>{}} required={true}/>
-                    <CustomTextInput title="Redirect" description="A title for this website" instructions="required" name="settings.title" value={settings.title} handleChange={()=>{}} required={true}/>
+                    <a className="btn btn-primary" href={route('facebook_reconnect')}> <Facebook className="w-full"/> Reconnect</a>
+                    <CustomTextInput title="Client id" description="An id for this website" instructions="required" name="settings.facebook.client_id" value={settings.facebook.client_id} handleChange={()=>{}} required={true}/>
+                    <CustomTextInput title="Client secret" description="A title for this website" instructions="required" name="settings.title" value={settings.facebook.client_secret} handleChange={()=>{}} required={true}/>
+                    <CustomTextInput title="Redirect" description="A title for this website" instructions="required" name="settings.title" value={settings.facebook.redirect} handleChange={()=>{}} required={true}/>
                 </div>
             </div>
         </div>

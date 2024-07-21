@@ -32,4 +32,12 @@ class FacebookConversation extends Model
 
         return $conversation;
     }
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program_id');
+    }
+    public function page()
+    {
+        return $this->belongsTo(FacebookPage::class, 'facebook_page_id');
+    }
 }

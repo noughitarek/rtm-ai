@@ -36,34 +36,36 @@ const PagesIndex: React.FC<PageProps<{ pages: PageType[], from:number, to:number
                                     <input className="form-check-input" type="checkbox" />
                                 </td>
                                 <td className="!py-3.5">
-                                    <div className="flex items-center">
-                                        <div className="ml-4">
-                                            <div className="flex items-center">
-                                                <Hash className="h-4 w-4 text-gray-500 mr-1" />
-                                                <span className="text-gray-500">{page.id}</span>
-                                            </div>
-                                            <div className="flex items-center mt-1">
-                                                <Blocks className="h-4 w-4 text-gray-500 mr-1" />
-                                                <span className="text-gray-500">{page.name}</span>
-                                            </div>
-                                            <div className="flex items-center mt-1">
-                                                <Facebook className="h-4 w-4 text-gray-500 mr-1" />
-                                                <span className="text-gray-500">{page.facebook_page_id}</span>
-                                            </div>
-                                            <div className="flex items-center mt-1">
-                                                <Calendar className="h-4 w-4 text-gray-500 mr-1" />
-                                                <span className="text-gray-500">
-                                                {new Date(page.created_at).toLocaleString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    second: '2-digit'
-                                                })}</span>
+                                    <Link href={route('pages.conversations', {page: page})}>
+                                        <div className="flex items-center">
+                                            <div className="ml-4">
+                                                <div className="flex items-center">
+                                                    <Hash className="h-4 w-4 text-gray-500 mr-1" />
+                                                    <span className="text-gray-500">{page.id}</span>
+                                                </div>
+                                                <div className="flex items-center mt-1">
+                                                    <Blocks className="h-4 w-4 text-gray-500 mr-1" />
+                                                    <span className="text-gray-500">{page.name}</span>
+                                                </div>
+                                                <div className="flex items-center mt-1">
+                                                    <Facebook className="h-4 w-4 text-gray-500 mr-1" />
+                                                    <span className="text-gray-500">{page.facebook_page_id}</span>
+                                                </div>
+                                                <div className="flex items-center mt-1">
+                                                    <Calendar className="h-4 w-4 text-gray-500 mr-1" />
+                                                    <span className="text-gray-500">
+                                                    {new Date(page.created_at).toLocaleString('en-GB', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        second: '2-digit'
+                                                    })}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </td>
                                 <td className="!py-3.5">
                                     <div className="flex items-center">

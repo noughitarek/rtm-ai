@@ -103,6 +103,22 @@ export interface Page{
     created_at: Date;
 }
 
+
+export interface Conversation{
+    id: number;
+    facebook_user_id: string;
+    facebook_conversation_id: string;
+    total_page_messages: number;
+    total_user_messages: number;
+    page: Page;
+    name: string;
+    email: string;
+    can_reply: boolean;
+    program?: Program;
+    started_at: Date;
+    ended_at: Date;
+}
+
 export interface Remarketing{
     id: number;
     name: string;
