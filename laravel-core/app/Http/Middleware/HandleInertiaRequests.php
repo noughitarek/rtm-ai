@@ -60,7 +60,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()
             ],
-            'menu' => $formated_menu
+            'menu' => $formated_menu,
+            'settings' => config('settings')
         ];
     }
 }
