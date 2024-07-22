@@ -11,7 +11,7 @@ class PageController extends Controller
 {
     public function index()
     {
-        $pages = FacebookPage::whereNull('expired_at')->orderby('id', 'desc')->get()->toArray();
+        $pages = FacebookPage::whereNull('expired_at')->where('type', 'business')->orderby('id', 'desc')->get()->toArray();
 
         return Inertia::render('Pages/Index', [
             'pages' => $pages,

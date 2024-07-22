@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\FacebookPage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 
 class SettingController extends Controller
@@ -19,45 +20,83 @@ class SettingController extends Controller
 
     public function redirectToFacebook()
     {
-        return Socialite::buildProvider(
-            \Laravel\Socialite\Two\FacebookProvider::class,
-            config('settings.facebook')
-        )->redirect();
+        return Socialite::driver('facebook')->scopes(['email', 'pages_show_list', 'pages_messaging'])->redirect();
     }
     
     public function handleFacebookCallback()
     {
         try {
-            $user = Socialite::buildProvider(
-                \Laravel\Socialite\Two\FacebookProvider::class,
-                config('settings.facebook')
-            )->user();
+            $user = Socialite::driver('facebook')->user();
         } catch (\Exception $e) {
             return redirect('/login')->with('error', 'Facebook authentication failed.');
         }
         $fb_user = FacebookPage::where("facebook_page_id", (string)$user->id)->first();
-        if(!$fb_user)
-        {
-            FacebookPage::create(array(
+        if(!$fb_user){
+            $fb_user = FacebookPage::create([
                 "facebook_page_id" => (string)$user->id,
                 "name" => $user->name,
                 "access_token" => $user->token,
                 'type' => 'user',
                 'expired_at' => null
-            ));
+            ]);
+        }else{
+            $fb_user->update([
+                "facebook_page_id" => (string)$user->id,
+                "name" => $user->name,
+                "access_token" => $user->token,
+                'type' => 'user',
+                'expired_at' => null
+            ]);
         }
-        else
-        {
-            $fb_user->update(array(
-                "facebook_page_id" => (string)$user->id,
-                "name" => $user->name,
-                "access_token" => $user->token,
-                'type' => 'user',
-                'expired_at' => null
-            ));
+
+        try{
+            $this->get_pages($fb_user);
+        }
+        catch(\Exception $e){
+            echo 'Error: ' . $e->getMessage();
         }
         
-        $pages = FacebookPage::Get_Pages();
         return redirect('/');
+    }
+
+    public function get_pages($active_user)
+    {
+        $response = Http::get('https://graph.facebook.com/v19.0/me/accounts', [
+            'access_token' => $active_user->access_token,
+        ]);
+        
+        if ($response->successful()){
+            $responseData = $response->json();
+
+            if(isset($responseData['data'])){
+                FacebookPage::where('type', 'business')->update(['expired_at'=> now()]);
+
+                foreach ($responseData['data'] as $pageVal) {
+                    $fb_page = FacebookPage::where('facebook_page_id', (string)$pageVal['id'])->first();
+                    
+                    if(!$fb_page){
+                        $fb_page = FacebookPage::create([
+                            'facebook_page_id' => (string)$pageVal['id'],
+                            "name" => $pageVal['name'],
+                            "access_token" => $pageVal['access_token'],
+                            'type' => 'business',
+                        ])->Get_Conversations();
+                        
+                    }else{
+                        $fb_page->update([
+                            'facebook_page_id' => (string)$pageVal['id'],
+                            "name" => $pageVal['name'],
+                            "access_token" => $pageVal['access_token'],
+                            'type' => 'business',
+                            'expired_at' => null
+                        ]);   
+                    }
+                }
+            }else{
+                echo 'No data found in the response.';
+            }
+        }else{
+            echo 'Error occurred while fetching data from Facebook API.';
+        }
     }
 }

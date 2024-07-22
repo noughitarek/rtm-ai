@@ -6,8 +6,8 @@ export default function Guest({ children }: PropsWithChildren) {
     return (
         <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
             <div>
-                <Link href="/">
-                    <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
+                <Link href="/" className="flex mr-auto">
+                    <img className="w-20 h-20 fill-current text-gray-500" src="/dist/images/rtm.png"/>
                 </Link>
             </div>
 
