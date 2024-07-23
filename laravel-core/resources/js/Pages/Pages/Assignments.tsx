@@ -18,8 +18,6 @@ const formatDate = (date: Date) => {
 };
 
 const PagesIndex: React.FC<PageProps<{ conversation: Conversation }>> = ({ auth, menu, conversation }) => {
-    const [endingDateShown, setEndingDateShown] = useState(false);
-
     return (
         <>
             <Head title="Pages" />
@@ -94,7 +92,7 @@ const PagesIndex: React.FC<PageProps<{ conversation: Conversation }>> = ({ auth,
                                         {remarketing_message.templates_group&&remarketing_message.templates_group.name}
                                     </td>
                                     <td>
-                                        {remarketing_message.template&&remarketing_message.template.name}
+                                        {remarketing_message.template_row&&remarketing_message.template_row.name}
                                     </td>
                                 </tr>
                                 ))}

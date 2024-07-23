@@ -30,15 +30,14 @@ class SendRemarketingMessages extends Command
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
 
         foreach($remarketings as $remarketing){
-            $messages = RemarketingMessage::where('remarketing', $remarketing->id)
+            $messages = RemarketingMessage::with('conversation', 'template_row')->where('remarketing', $remarketing->id)
             ->whereNull('sent_at')
             ->whereNotNull('template')
             ->where('send_at', "<", now())
             ->get();
             
             foreach($messages as $message){
-
-                if($message->facebook_conversation->facebook_page->Send_Template($message->template, $message->facebook_conversation)){
+                if($message->conversation->page->Send_Template($message->template_row, $message->conversation)){
                     $message->sent_at = now();
                     $message->save();
                 }

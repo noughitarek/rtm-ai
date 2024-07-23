@@ -9,7 +9,8 @@ class RemarketingMessage extends Model
 {
     use HasFactory;
     protected $fillable = ["remarketing", "template", "templates_group", "facebook_conversation", "send_at", "sent_at"];
-    public function template()
+
+    public function template_row()
     {
         return $this->belongsTo(Template::class, 'template');
     }
@@ -21,20 +22,9 @@ class RemarketingMessage extends Model
     {
         return $this->belongsTo(Remarketing::class, 'remarketing');
     }
-    public function facebook_conversation()
+    public function conversation()
     {
         return $this->belongsTo(FacebookConversation::class, 'facebook_conversation');
-    }
-    public function facebook_page()
-    {
-        return $this->hasOneThrough(
-            FacebookPage::class, 
-            FacebookConversation::class,
-            'facebook_page_id',
-            'id',
-            'facebook_conversation',
-            'facebook_page_id'
-        );
     }
     
 }

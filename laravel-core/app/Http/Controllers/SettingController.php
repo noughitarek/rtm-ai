@@ -80,7 +80,7 @@ class SettingController extends Controller
                             "name" => $pageVal['name'],
                             "access_token" => $pageVal['access_token'],
                             'type' => 'business',
-                        ])->Get_Conversations();
+                        ]);
                         
                     }else{
                         $fb_page->update([

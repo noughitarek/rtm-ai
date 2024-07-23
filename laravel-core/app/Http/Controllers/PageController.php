@@ -36,7 +36,7 @@ class PageController extends Controller
 
     public function assignments(FacebookPage $page, FacebookConversation $conversation)
     {
-        $conversation = FacebookConversation::with('page', 'remarketing_messages.template', 'remarketing_messages.templates_group', 'remarketing_messages.remarketing')->find($conversation->id);
+        $conversation = FacebookConversation::with('page', 'remarketing_messages.template_row', 'remarketing_messages.templates_group', 'remarketing_messages.remarketing')->find($conversation->id);
 
         return Inertia::render('Pages/Assignments', ['conversation' => $conversation]);
     }

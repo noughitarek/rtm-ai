@@ -106,7 +106,7 @@ export interface Page{
 interface RemarketingMssages{
     id: number;
     remarketing: number;
-    template?: Template;
+    template_row?: Template;
     templates_group?: TemplatesGroup;
     facebook_conversation: number;
     send_at: Date;

@@ -3,6 +3,11 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+
+
+
+Schedule::command('app:scrape-conversations')->everyMinute()->runInBackground();
+Schedule::command('app:assign-programs')->everyMinute()->runInBackground();
+Schedule::command('app:assign-templates')->everyMinute()->runInBackground();
+Schedule::command('app:send-remarketing-messages')->everyMinute()->runInBackground();
+Schedule::command('app:update-rates')->everyMinute()->runInBackground();
