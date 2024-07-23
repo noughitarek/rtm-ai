@@ -160,4 +160,18 @@ class RemarketingController extends Controller
             return redirect()->back()->with('error', 'Remarketing could not be deleted.');
         }
     }
+
+    public function toggle_status(Remarketing $remarketing)
+    {
+        $isActive = !$remarketing->is_active;
+
+        $remarketing->is_active = $isActive;
+        $remarketing->save();
+
+        if ($remarketing->wasChanged()) {
+            return redirect()->route('remarketings.index')->with('success', 'Remarketing '.$isActive?'activated':'deactivated'.' successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Remarketing could not be deleted.');
+        }
+    }
 }

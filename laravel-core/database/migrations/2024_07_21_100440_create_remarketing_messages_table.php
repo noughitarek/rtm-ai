@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             
             $table->foreignId('remarketing')->constrained('remarketings');
+            $table->foreignId('templates_group')->nullable()->constrained('templates_groups');
             $table->foreignId('template')->nullable()->constrained('templates');
             $table->foreignId('facebook_conversation')->constrained('facebook_conversations');
 
             $table->timestamp('send_at');
-            $table->timestamp('sented_at')->nullable();
+            $table->timestamp('sent_at')->nullable();
 
             $table->timestamps();
         });

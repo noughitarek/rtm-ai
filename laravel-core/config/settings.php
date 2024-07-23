@@ -4,8 +4,8 @@ return [
     "title" => "Remarketing Tool for Messages",
 
     "limits" => [
-        'conversations' => 100,
-        'message_per_conversation' => 100,
+        'conversations' => 50,
+        'message_per_conversation' => 1000,
         "max_simultaneous_message" => 10,
     ],
     "minimum_pourcentage" => 10,

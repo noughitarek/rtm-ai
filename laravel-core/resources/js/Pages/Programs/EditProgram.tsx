@@ -33,8 +33,9 @@ const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_group
         program_records: program.records,
     });
 
+
+
     console.log(programForm.data);
-    
     const [editing, setEditing] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -68,7 +69,6 @@ const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_group
             }
         });
     };
-
     const moreRecords: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault();
         const moreProgramRecords: ProgramRecord[] = [
@@ -94,17 +94,22 @@ const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_group
     };
 
     const handleRecordChange = (index: number, field: keyof ProgramRecord, value: any) => {
+        const updatedRecords = [...programForm.data.program_records];
+
         if(field == "group" && value === 0){
-            const updatedRecords = [...programForm.data.program_records];
             const { template, ...rest } = updatedRecords[index];
             updatedRecords[index] = { ...rest };
-            updatedRecords[index] = { ...updatedRecords[index], [field]: value };
-            programForm.setData('program_records', updatedRecords);
-        }else{
-            const updatedRecords = [...programForm.data.program_records];
-            updatedRecords[index] = { ...updatedRecords[index], [field]: value };
-            programForm.setData('program_records', updatedRecords);
         }
+        else if(field == "group" )
+        {
+            updatedRecords[index] = {
+                ...updatedRecords[index],
+                template: 0
+            };
+        }
+
+        updatedRecords[index] = { ...updatedRecords[index], [field]: value };
+        programForm.setData('program_records', updatedRecords);
     };
 
     const saveButton = (

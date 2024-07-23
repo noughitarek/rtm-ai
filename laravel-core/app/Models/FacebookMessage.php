@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FacebookMessage extends Model
 {
     use HasFactory;
-    protected $fillable = ["facebook_conversation_id", "facebook_message_id", "sented_from", "message"];
+    protected $fillable = ["facebook_conversation_id", "facebook_message_id", "sented_from", "message", "created_at"];
 
     /**
      * Create or update a Facebook message.

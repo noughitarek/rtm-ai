@@ -15,6 +15,7 @@ class Remarketing extends Model
         "facebook_page_id", 
         "programs_group_id", 
         "templates_group_id", 
+        "is_active",
         "created_by", 
         "updated_by", 
         "deleted_by", 

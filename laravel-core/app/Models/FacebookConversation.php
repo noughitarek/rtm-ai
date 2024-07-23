@@ -38,6 +38,11 @@ class FacebookConversation extends Model
     }
     public function page()
     {
-        return $this->belongsTo(FacebookPage::class, 'facebook_page_id');
+        return $this->belongsTo(FacebookPage::class, 'facebook_page_id', 'facebook_page_id');
     }
+    public function remarketing_messages()
+    {
+        return $this->hasMany(RemarketingMessage::class, 'facebook_conversation')->orderby('send_at', 'asc');
+    }
+
 }

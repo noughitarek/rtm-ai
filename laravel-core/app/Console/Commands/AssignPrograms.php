@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use App\Models\Remarketing;
 use Illuminate\Console\Command;
 use App\Models\RemarketingMessage;
@@ -82,12 +83,13 @@ class AssignPrograms extends Command
     {
         foreach($conversation->program->records as $record)
         {
-            $startedAt = \Carbon\Carbon::parse($conversation->started_at);
+            $startedAt = Carbon::parse($conversation->started_at);
             $sendAt = $startedAt->copy()->addSeconds($record->send_after);
             
             RemarketingMessage::create([
                 "remarketing" => $remarketing->id,
                 "template" => $record->template->id??null,
+                "templates_group" => $record->group->id??$remarketing->templates_group_id,
                 "facebook_conversation" => $conversation->id,
                 "send_at" => $sendAt,
                 "sented_at" => null

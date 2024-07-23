@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { PageProps, RemarketingsCategory, Remarketing } from '@/types';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
-import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User } from 'lucide-react';
+import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User, XSquare } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import DeleteModal from '@/Components/DeleteModal';
 import { Head, Link, router, useForm } from '@inertiajs/react';
@@ -119,6 +119,19 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
         );
         setActiveRemarketings(filteredRemarketings)
     };
+
+    const toggleRemarketingStatus = async (event: React.MouseEvent<HTMLDivElement>, remarketingId: number)  => {
+        event.preventDefault();
+        
+        try {
+            await remarketingForm.post(route('remarketings.toggle.status', { remarketing: remarketingId }));
+            toast.success('Remarketing has been toggled successfully');
+            router.get(route('remarketings.index'));
+        } catch(error) {
+            toast.error('Error toggling the remarketing');
+            console.error('Error details:', error);
+        }
+    }
     return (<>
         <Head title="Remarketings" />
         <Webmaster
@@ -244,6 +257,17 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
                                                 })}
                                             </span>
                                         </div>
+                                    </td>
+                                    <td className="w-40">
+                                    { !remarketing.is_active ? (
+                                        <div className="flex items-center justify-center text-danger" onClick={(event)=>toggleRemarketingStatus(event, remarketing.id)}>
+                                            <XSquare className="w-4 h-4 mr-2" /> Inactive
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center text-success" onClick={(event)=>toggleRemarketingStatus(event, remarketing.id)}>
+                                            <CheckSquare className="w-4 h-4 mr-2" /> Active
+                                        </div>
+                                    )}
                                     </td>
                                     <td className="table-report__action w-56">
                                         <div className="flex justify-center items-center">

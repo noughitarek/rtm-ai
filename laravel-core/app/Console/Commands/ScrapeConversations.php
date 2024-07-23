@@ -61,63 +61,50 @@ class ScrapeConversations extends Command
             $responseData = $response->json();
 
             if(isset($responseData['data'])){
-                $started_at = $ended_at = $last_from_page_at = $last_from_user_at = $last_from = null;
-                $total_user_messages = $total_page_messages = 0;
 
                 foreach($responseData['data'] as $conversation){
-                    $messages = [];
+
+                    $db_conversation = FacebookConversation::where('facebook_conversation_id',  (string)$conversation['id'])->first();
+                    if(!$db_conversation){
+                        $db_conversation = FacebookConversation::create([
+                            'facebook_conversation_id' => (string)$conversation['id'],
+                            'facebook_user_id' => (string)$conversation["senders"]["data"][0]["id"],
+                            'facebook_page_id' => $page->facebook_page_id,
+                            'name' => $conversation["senders"]["data"][0]["name"],
+                            'email' => $conversation["senders"]["data"][0]["email"],
+                            'can_reply' => $conversation["can_reply"],
+                            "started_at" => now(),
+                            "last_from" => "n/a"
+                        ]);
+                    }
 
                     foreach($conversation['messages']['data'] as $message){
+
                         $createdTime = Carbon::parse($message['created_time']);
-
-                        $messageData = array(
-                            "facebook_conversation_id" => (string)$conversation['id'],
-                            'facebook_message_id' => (string)$message['id'],
-                            "sented_from" => $message['from']['id']==$page->facebook_page_id?'page':'user',
-                            "message" => $message['message'],
-                            'created_at' => $createdTime
-                        );
-
-                        if (is_null($started_at) || $createdTime < $started_at)
-                            $started_at = $createdTime;
-                        
-                        if (is_null($ended_at) || $createdTime > $ended_at){
-                            $ended_at = $createdTime;
-                            $last_from = $message['from']['id'] == $page->facebook_page_id ? 'page' : 'user';
+                        $db_message = FacebookMessage::where('facebook_message_id', $message['id'])->first();
+                        if(!$db_message){
+                            $db_message = FacebookMessage::create([
+                                'facebook_conversation_id' => $db_conversation->facebook_conversation_id,
+                                'facebook_message_id' => (string)$message['id'],
+                                'message' => $message['message'],
+                                'sented_from' => $message['from']['id']==$page->facebook_page_id?'page':'user',
+                                'created_at' => $createdTime
+                            ]);
                         }
 
-                        
-                        if ($message['from']['id'] == $page->facebook_page_id){
-                            $total_page_messages++;
+                        if($db_conversation->started_at > $createdTime) $db_conversation->started_at = $createdTime;
 
-                            if (is_null($last_from_page_at) || $createdTime > $last_from_page_at)
-                                $last_from_page_at = $createdTime;
-                        } else {
-                            $total_user_messages++;
-
-                            if (is_null($last_from_user_at) || $createdTime > $last_from_user_at)
-                                $last_from_user_at = $createdTime;
+                        if($db_conversation->ended_at == null ||$db_conversation->ended_at < $createdTime){
+                            $db_conversation->last_from = $message['from']['id']==$page->facebook_page_id?'page':'user';
+                            $db_conversation->ended_at = $createdTime;
                         }
-                        $messages[] = $messageData;
+                        if($message['from']['id']==$page->facebook_page_id && $db_conversation->last_from_page_at < $createdTime){
+                            $db_conversation->last_from_page_at = $createdTime;
+                        }else{
+                            $db_conversation->last_from_user_at = $createdTime;
+                        }
+                        $db_conversation->save();
                     }
-                    $conversationData  = array(
-                        "facebook_user_id" => (string)$conversation["senders"]["data"][0]["id"],
-                        "facebook_conversation_id" => (string)$conversation['id'],
-                        "facebook_page_id" => (string)$page->facebook_page_id,
-                        "name" => $conversation["senders"]["data"][0]["name"],
-                        "email" => $conversation["senders"]["data"][0]["email"],
-                        "can_reply" => $conversation["can_reply"]==1,
-                        "last_from" => $last_from,
-                        "started_at" => $started_at,
-                        "ended_at" => $ended_at,
-                        "last_from_page_at" => $last_from_page_at,
-                        "last_from_user_at" => $last_from_user_at,
-                        "total_user_messages" => $total_user_messages,
-                        "total_page_messages" => $total_page_messages,
-                    );
-
-                    FacebookConversation::createOrUpdate($conversationData);
-                    FacebookMessage::createOrUpdate($messages);
                 }
                 
                 $this->info('Total: ' . count($responseData['data']).' From '. $page->name);

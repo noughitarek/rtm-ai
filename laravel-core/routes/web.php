@@ -73,6 +73,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{remarketing}/edit', [RemarketingController::class, 'edit'])->name('edit');
         Route::post('/{remarketing}/update', [RemarketingController::class, 'update'])->name('update');
         Route::delete('/{remarketing}/delete', [RemarketingController::class, 'destroy'])->name('destroy');
+
+        Route::post('/{remarketing}/toggle-status', [RemarketingController::class, 'toggle_status'])->name('toggle.status');
     });
 
     Route::prefix('users')->name('users.')->group(function() {

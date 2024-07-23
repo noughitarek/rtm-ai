@@ -103,6 +103,17 @@ export interface Page{
     created_at: Date;
 }
 
+interface RemarketingMssages{
+    id: number;
+    remarketing: number;
+    template?: Template;
+    templates_group?: TemplatesGroup;
+    facebook_conversation: number;
+    send_at: Date;
+    sent_at?: Date;
+    created_at: Date;
+    updated_at: Date;
+}
 
 export interface Conversation{
     id: number;
@@ -117,6 +128,7 @@ export interface Conversation{
     program?: Program;
     started_at: Date;
     ended_at: Date;
+    remarketing_messages?: RemarketingMssages[];
 }
 
 export interface Remarketing{
@@ -127,6 +139,7 @@ export interface Remarketing{
     programs_group: ProgramsGroup;
     templates_group: TemplatesGroup;
     category: RemarketingsCategory;
+    is_active: boolean;
     created_at: Date;
     updated_at: Date;
     created_by: User;

@@ -98,6 +98,7 @@ class ProgramController extends Controller
         foreach($request->input('program_records') as $record)
         {
             ProgramRecord::create([
+                "templates_group_id" => $record['group']==0?null:$record['group'],
                 "template_id" => $record['template']==0?null:$record['template'],
                 "program_id" => $program->id ,
                 "send_after" => $record['send_after']*($record['unit_of_time']??1)
@@ -158,7 +159,19 @@ class ProgramController extends Controller
             }else{
                 $template = null;
             }
+            if(isset($record['group'])){
+                if(is_array($record['group'])){
+                    $templates_group = $record['group']['id'];
+                }elseif($record['group'] != 0){
+                    $templates_group = $record['group'];
+                }else{
+                    $templates_group = null;
+                }
+            }else{
+                $templates_group = null;
+            }
             ProgramRecord::create([
+                "templates_group_id" => $templates_group,
                 "template_id" => $template,
                 "program_id" => $program->id ,
                 "send_after" => ($record['send_after'] ?? 0) * ($record['unit_of_time'] ?? 1),
