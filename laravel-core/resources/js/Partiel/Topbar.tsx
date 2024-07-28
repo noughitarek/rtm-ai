@@ -199,7 +199,7 @@ const Topbar: React.FC<TopbarProps> = ({ breadcrumb, user }) => {
 
             </Dropdown>
             
-            <div className="fixed right-0 me-6">
+            <div className="absolute right-0 me-6">
             <Dropdown>
                 <div className="intro-x w-8 h-8">
                 <Dropdown.Trigger>
