@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('oauth/facebook/logout', 'logout');
     });
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
+    Route::post('/settings', [SettingController::class, 'store'])->name('settings.save');
 });
 
 /*

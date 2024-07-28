@@ -1,8 +1,34 @@
 import CustomTextInput from "@/Base-components/Forms/CustomTextInput";
 import { DynamicSetting, PageProps } from "@/types";
 import { Save } from "lucide-react";
+import { useState } from "react";
+import { Inertia } from '@inertiajs/inertia';
+import ReactLoading from 'react-loading';
+import { toast } from 'react-toastify';
 
 const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) => {
+    const [id, setId] = useState<string>(settings.id)
+    const [title, setTitle] = useState<string>(settings.title)
+    const [saving, setSaving] = useState<boolean>(false)
+
+    const handleSubmit = async () => {
+        setSaving(true)
+        
+        Inertia.post(route('settings.save'),{
+            "settings.id": id,
+            "settings.title": title
+        }, {
+            onSuccess: () => {
+                toast.success('Settings saved successfully');
+                setSaving(false)
+            },
+            onError: (errors) => {
+                toast.error('Failed to save settings', errors);
+                setSaving(false)
+            }
+        });
+    }
+
     return (
         <div className="grid grid-cols-12 gap-6">
             <div className="intro-y box col-span-12 2xl:col-span-6">
@@ -10,13 +36,14 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
                     <h2 className="font-medium text-base mr-auto">
                         General settings
                     </h2>
-                    <button className="btn btn-outline-secondary hidden sm:flex">
-                        <Save className="w-4 h-4 mr-2"/> Save
+                    <button onClick={handleSubmit} disabled={saving} className="btn btn-outline-secondary hidden sm:flex">
+                        { !saving && (<><Save className="w-4 h-4 mr-2"/> Save</>)}
+                        { saving && (<><ReactLoading type="spin" color="green" height={18} width={18} />&nbsp; Saving</>)}
                     </button>
                 </div>
                 <div className="p-5">
-                    <CustomTextInput title="Id" description="An id for this website" instructions="required" name="settings.id" value={settings.id} handleChange={()=>{}} required={true}/>
-                    <CustomTextInput title="Title" description="A title for this website" instructions="required" name="settings.title" value={settings.title} handleChange={()=>{}} required={true}/>
+                    <CustomTextInput title="Id" description="An id for this website" instructions="required" name="settings.id" value={id} handleChange={(event)=>setId(event.target.value)} required={true}/>
+                    <CustomTextInput title="Title" description="A title for this website" instructions="required" name="settings.title" value={title} handleChange={(event)=>setTitle(event.target.value)} required={true}/>
                 </div>
             </div>
         </div>
