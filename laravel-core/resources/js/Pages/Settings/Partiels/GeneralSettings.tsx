@@ -5,10 +5,12 @@ import { useState } from "react";
 import { Inertia } from '@inertiajs/inertia';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
+import CustomNumber from "@/Base-components/Forms/CustomNumber";
 
 const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) => {
     const [id, setId] = useState<string>(settings.id)
     const [title, setTitle] = useState<string>(settings.title)
+    const [minimum_pourcentage, setMinimum_pourcentage] = useState<string>(settings.minimum_pourcentage)
     const [saving, setSaving] = useState<boolean>(false)
 
     const handleSubmit = async () => {
@@ -16,7 +18,8 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
         
         Inertia.post(route('settings.save'),{
             "settings.id": id,
-            "settings.title": title
+            "settings.title": title,
+            "settings.minimum_pourcentage": minimum_pourcentage
         }, {
             onSuccess: () => {
                 toast.success('Settings saved successfully');
@@ -44,6 +47,7 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
                 <div className="p-5">
                     <CustomTextInput title="Id" description="An id for this website" instructions="required" name="settings.id" value={id} handleChange={(event)=>setId(event.target.value)} required={true}/>
                     <CustomTextInput title="Title" description="A title for this website" instructions="required" name="settings.title" value={title} handleChange={(event)=>setTitle(event.target.value)} required={true}/>
+                    <CustomNumber title="Minimum pourcentage" description="A title for this website" instructions="required" name="settings.title" value={Number(minimum_pourcentage)} handleChange={(event)=>setMinimum_pourcentage(event.target.value)} required={true}/>
                 </div>
             </div>
         </div>
