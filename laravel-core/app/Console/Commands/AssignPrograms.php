@@ -95,7 +95,7 @@ class AssignPrograms extends Command
                 "templates_group" => $record->group->id??$remarketing->templates_group_id,
                 "facebook_conversation" => $conversation->id,
                 "send_at" => $sendAt,
-                "sented_at" => null
+                "sent_at" => null
             ]);
         }
     }

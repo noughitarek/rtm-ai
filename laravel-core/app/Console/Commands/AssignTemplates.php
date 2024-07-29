@@ -53,6 +53,7 @@ class AssignTemplates extends Command
         
         $used_templates = RemarketingMessage::where('facebook_conversation', $message->facebook_conversation)
         ->whereNotNull('template')
+        ->where('archived', 0)
         ->pluck('template');
         
         $templates = Template::whereNull('deleted_by')

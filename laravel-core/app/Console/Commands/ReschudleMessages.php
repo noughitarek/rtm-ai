@@ -33,8 +33,11 @@ class ReschudleMessages extends Command
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
         
         foreach($remarketings as $remarketing){
-            $conversations = FacebookConversation::whereNotNull('program_id')->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)->get();
 
+
+            $conversations = FacebookConversation::whereNotNull('program_id')
+            ->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)
+            ->get();
             foreach($conversations as $conversation){
 
                 $maxSendAt = RemarketingMessage::where('facebook_conversation', $conversation->id)->max("send_at");
@@ -44,6 +47,8 @@ class ReschudleMessages extends Command
 
                 if (now()->greaterThan($maxSendAt->copy()->addSeconds($conversation->program->reuse_after))) {
 
+                    RemarketingMessage::where('facebook_conversation', $conversation->id)
+                    ->update(['archived' => true]);
                     foreach($conversation->program->records as $record){
                         $sendAt = now()->addSeconds($record->send_after);
                         
@@ -53,7 +58,7 @@ class ReschudleMessages extends Command
                             "templates_group" => $record->group->id??$remarketing->templates_group_id,
                             "facebook_conversation" => $conversation->id,
                             "send_at" => $sendAt,
-                            "sented_at" => null
+                            "sent_at" => null
                         ]);
                     }
                 }

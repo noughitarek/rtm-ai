@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class RemarketingMessage extends Model
 {
     use HasFactory;
-    protected $fillable = ["remarketing", "template", "templates_group", "facebook_conversation", "send_at", "sent_at"];
+    protected $fillable = ["archived", "remarketing", "template", "templates_group", "facebook_conversation", "send_at", "sent_at"];
 
     public function template_row()
     {
