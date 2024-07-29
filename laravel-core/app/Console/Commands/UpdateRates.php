@@ -60,7 +60,7 @@ class UpdateRates extends Command
             // Loop through each template in the group
             foreach ($group->templates as $template) {
                 // Fetch all remarketing messages for the template that have been sent
-                $messages = RemarketingMessage::where('template_id', $template->id) // Changed 'template' to 'template_id' to match column name
+                $messages = RemarketingMessage::where('template', $template->id) // Changed 'template' to 'template_id' to match column name
                     ->whereNotNull('sent_at')
                     ->get();
 
