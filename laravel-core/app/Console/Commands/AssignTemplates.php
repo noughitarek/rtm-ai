@@ -35,7 +35,7 @@ class AssignTemplates extends Command
         foreach($remarketings as $remarketing){
             $messages = RemarketingMessage::where('remarketing', $remarketing->id)
             ->whereNull('sent_at')
-            ->where('send_at', "<", now())
+            ->where('send_at', "<", now()->subSeconds(120))
             ->get();
 
             foreach($messages as $message){
