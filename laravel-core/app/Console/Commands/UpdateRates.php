@@ -77,9 +77,9 @@ class UpdateRates extends Command
                 ->get();
 
                 $total = $messages->count();
-                $totalOrds = $template->total_orders;
+                $totalOrds = $program->total_orders;
 
-                // Update the total used for the template
+                // Update the total used for the program
                 $program->total_used = $total;
                 $program->save(); // Save the updated total_used value
 
