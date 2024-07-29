@@ -20,7 +20,8 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
         Inertia.post(route('settings.save'),{
             "settings.id": id,
             "settings.title": title,
-            "settings.minimum_pourcentage": minimum_pourcentage
+            "settings.minimum_pourcentage": minimum_pourcentage,
+            "settings.max_per_minute": max_per_minute
         }, {
             onSuccess: () => {
                 toast.success('Settings saved successfully');
