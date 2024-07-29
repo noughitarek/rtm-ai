@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ProgramsGroup;
 use App\Models\TemplatesGroup;
 use Illuminate\Console\Command;
 use App\Models\RemarketingMessage;
@@ -44,9 +45,55 @@ class UpdateRates extends Command
             if ($remarketing_message) {
                 $remarketing_message->template_row->total_orders += 1;
                 $remarketing_message->template_row->save(); // Save the updated total_orders value
+
+                
+                $remarketing_message->conversation->program->total_orders += 1;
+                $remarketing_message->conversation->program->save();
             }
         }
 
+        $this->UpdateTemplates();
+        $this->UpdatePrograms();
+    }
+    
+    public function UpdatePrograms(){
+        // Fetch all progrm groups that are not deleted
+        $groups = ProgramsGroup::whereNull('deleted_by')
+            ->whereNull('deleted_at')
+            ->get();
+
+        // Loop through each group
+        foreach ($groups as $group) {
+            $totalGrp = 0;
+            $totalOrdsGrp = 0;
+
+            // Loop through each program in the group
+            foreach ($group->programs as $program) {
+                // Fetch all remarketing messages for the program that have been sent
+                $conversations_ids = FacebookConversation::where('program_id', $program->id)->pluck('id');
+                $messages = RemarketingMessage::whereIn('facebook_conversation', $conversations_ids)
+                ->whereNotNull('sent_at')
+                ->get();
+
+                $total = $messages->count();
+                $totalOrds = $template->total_orders;
+
+                // Update the total used for the template
+                $program->total_used = $total;
+                $program->save(); // Save the updated total_used value
+
+                $totalGrp += $total;
+                $totalOrdsGrp += $totalOrds;
+            }
+
+            // Update the totals for the group
+            $group->total_used = $totalGrp;
+            $group->total_orders = $totalOrdsGrp;
+            $group->save(); // Save the updated totals for the group
+        }
+    }
+
+    public function UpdateTemplates(){
         // Fetch all template groups that are not deleted
         $groups = TemplatesGroup::whereNull('deleted_by')
             ->whereNull('deleted_at')
@@ -60,7 +107,7 @@ class UpdateRates extends Command
             // Loop through each template in the group
             foreach ($group->templates as $template) {
                 // Fetch all remarketing messages for the template that have been sent
-                $messages = RemarketingMessage::where('template', $template->id) // Changed 'template' to 'template_id' to match column name
+                $messages = RemarketingMessage::where('template', $template->id)
                     ->whereNotNull('sent_at')
                     ->get();
 
