@@ -49,10 +49,14 @@ class AssignTemplates extends Command
     public function pick_template($message)
     {
         $min_pourc = config('settings.minimum_pourcentage');
-
+        
+        $used_templates = RemarketingMessage::where('facebook_conversation', $message->facebook_conversation)
+        ->pluck('template');
+        
         $templates = Template::whereNull('deleted_by')
         ->whereNull('deleted_at')
         ->where('group_id', $message->templates_group)
+        ->whereNotIn('id', $used_templates)
         ->get();
 
         $total_orders = $templates->sum('total_orders');
