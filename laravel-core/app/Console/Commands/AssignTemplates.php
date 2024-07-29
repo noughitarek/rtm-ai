@@ -32,10 +32,11 @@ class AssignTemplates extends Command
     {
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
 
+        $currentTimePlus120Seconds = now()->addSeconds(120);
         foreach($remarketings as $remarketing){
             $messages = RemarketingMessage::where('remarketing', $remarketing->id)
             ->whereNull('sent_at')
-            ->where('send_at', "<", now()->subSeconds(120))
+            ->where('send_at', "<", $currentTimePlus120Seconds)
             ->get();
 
             foreach($messages as $message){
