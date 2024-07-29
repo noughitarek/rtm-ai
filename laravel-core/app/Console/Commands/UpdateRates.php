@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Program;
+use App\Models\Template;
 use App\Models\ProgramsGroup;
 use App\Models\TemplatesGroup;
 use Illuminate\Console\Command;
@@ -33,6 +35,9 @@ class UpdateRates extends Command
         // Fetch all Facebook messages matching the given pattern
         $orders_messages = FacebookMessage::where('message', 'like', '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%')->get();
 
+        Template::query()->update(['total_used' => 0, 'total_orders' => 0]);
+        Program::query()->update(['total_used' => 0, 'total_orders' => 0]);
+        
         // Loop through each order message
         foreach ($orders_messages as $order_message) {
             // Get the most recent remarketing message before the order
