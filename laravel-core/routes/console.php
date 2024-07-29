@@ -10,4 +10,4 @@ Schedule::command('app:scrape-conversations')->everyMinute()->runInBackground();
 Schedule::command('app:assign-programs')->everyMinute()->runInBackground();
 Schedule::command('app:assign-templates')->everyMinute()->runInBackground();
 Schedule::command('app:send-remarketing-messages')->everyMinute()->runInBackground();
-Schedule::command('app:update-rates')->everyMinute()->runInBackground();
+Schedule::command('app:update-rates')->everyDay()->runInBackground();
