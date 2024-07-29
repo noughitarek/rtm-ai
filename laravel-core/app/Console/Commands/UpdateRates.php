@@ -6,6 +6,7 @@ use App\Models\ProgramsGroup;
 use App\Models\TemplatesGroup;
 use Illuminate\Console\Command;
 use App\Models\RemarketingMessage;
+use App\Models\FacebookConversation;
 use App\Models\FacebookMessage; // Import FacebookMessage model
 
 class UpdateRates extends Command
