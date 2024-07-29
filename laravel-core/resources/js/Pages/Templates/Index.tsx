@@ -285,8 +285,10 @@ const TemplatesIndex: React.FC<PageProps<{ groups: TemplatesGroup[], from:number
                                         ))}
                                         { template.message && (<div className="flex items-center">
                                             <MessageSquareText className="h-4 w-4 text-gray-500 mr-2"/>
-                                            <span className='text-sm text-gray-500'>
-                                                {template.message}
+                                            <span className='text-sm text-gray-500'>                                                
+                                                {template.message && template.message.length > 10 
+                                                    ? template.message.substring(0, 10) + '...' 
+                                                    : template.message}
                                             </span>
                                         </div>)}
                                     </td>
