@@ -52,6 +52,7 @@ class AssignTemplates extends Command
         $min_pourc = config('settings.minimum_pourcentage');
         
         $used_templates = RemarketingMessage::where('facebook_conversation', $message->facebook_conversation)
+        ->whereNotNull('template')
         ->pluck('template');
         
         $templates = Template::whereNull('deleted_by')

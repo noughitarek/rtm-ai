@@ -30,10 +30,11 @@ class SendRemarketingMessages extends Command
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
 
         foreach($remarketings as $remarketing){
+            $currentTimePlus60Seconds = now()->addSeconds(60);
             $messages = RemarketingMessage::with('conversation', 'template_row')->where('remarketing', $remarketing->id)
             ->whereNull('sent_at')
             ->whereNotNull('template')
-            ->where('send_at', "<", now())
+            ->where('send_at', "<", $currentTimePlus60Seconds)
             ->get();
             
             foreach($messages as $message){
