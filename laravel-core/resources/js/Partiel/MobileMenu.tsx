@@ -13,9 +13,9 @@ const MobileMenu:React.FC<MobileMenuProps> = ({menuItems}) => {
     const [menuActive, setMenuActive] = useState(false)
     return (
         <div className={"mobile-menu md:hidden " + (menuActive ? "mobile-menu--active" : "")}>
-            <div style={{marginTop: "-4.5rem"}} className="mobile-menu-bar">
+            <div className="mobile-menu-bar">
                 <Link href="/" className="flex mr-auto">
-                    <img className="mt-4 ms-4 w-1/3" src="/dist/images/rtm.png"/>
+                    <img className="ms-4 w-1/4" src="/dist/images/rtm.png"/>
                 </Link>
                 <Button className="mobile-menu-toggler" onClick={()=>setMenuActive(true)}> <BarChart2Icon className="w-8 h-8 text-white transform -rotate-90"/> </Button>
             </div>

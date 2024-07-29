@@ -34,7 +34,10 @@ class AssignPrograms extends Command
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
         
         foreach($remarketings as $remarketing){
-            $conversations = FacebookConversation::whereNull('program_id')->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)->get();
+            $conversations = FacebookConversation::whereNull('program_id')
+            ->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)
+            ->where('started_at', ">", $remarketing->created_at)
+            ->get();
             
             foreach($conversations as $conversation){
 
