@@ -3,7 +3,8 @@ return [
     "id" => "RTM",
     "title" => "Remarketing Tool for Messages",
     "minimum_pourcentage" => 10,
-
+    "max_per_minute" => 20,
+    
     "limits" => [
         'conversations' => 10,
         'message_per_conversation' => 1000,

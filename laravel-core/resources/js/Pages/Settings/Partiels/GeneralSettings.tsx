@@ -11,6 +11,7 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
     const [id, setId] = useState<string>(settings.id)
     const [title, setTitle] = useState<string>(settings.title)
     const [minimum_pourcentage, setMinimum_pourcentage] = useState<string>(settings.minimum_pourcentage)
+    const [max_per_minute, setMax_per_minute] = useState<string>(settings.max_per_minute)
     const [saving, setSaving] = useState<boolean>(false)
 
     const handleSubmit = async () => {
@@ -47,7 +48,8 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
                 <div className="p-5">
                     <CustomTextInput title="Id" description="An id for this website" instructions="required" name="settings.id" value={id} handleChange={(event)=>setId(event.target.value)} required={true}/>
                     <CustomTextInput title="Title" description="A title for this website" instructions="required" name="settings.title" value={title} handleChange={(event)=>setTitle(event.target.value)} required={true}/>
-                    <CustomNumber title="Minimum pourcentage" description="A title for this website" instructions="required" name="settings.title" value={Number(minimum_pourcentage)} handleChange={(event)=>setMinimum_pourcentage(event.target.value)} required={true}/>
+                    <CustomNumber title="Minimum pourcentage" description="A title for this website" instructions="required" name="settings.minimum_pourcentage" value={Number(minimum_pourcentage)} handleChange={(event)=>setMinimum_pourcentage(event.target.value)} required={true}/>
+                    <CustomNumber title="Max messages per minute" description="A title for this website" instructions="required" name="settings.max_per_minute" value={Number(max_per_minute)} handleChange={(event)=>setMax_per_minute(event.target.value)} required={true}/>
                 </div>
             </div>
         </div>
