@@ -146,6 +146,18 @@ class ProgramController extends Controller
             "updated_by" => Auth::user()->id,
         ]);
         ProgramRecord::where('program_id', $program->id)->delete();
+        $conversations = FacebookConversation::where('program_id', $program->id)->get();
+        
+        foreach($conversations as $conversation){
+            
+            $conversation->program_id = null;
+            $conversation->save();
+            
+            RemarketingMessage::where('facebook_conversation', $conversation->facebook_conversation_id)
+            ->whereNull('sent_at')
+            ->where('archived', 0)
+            ->delete();
+        }
         foreach($request->input('program_records') as $record)
         {
             if(isset($record['template'])){
