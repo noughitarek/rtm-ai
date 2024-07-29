@@ -35,7 +35,7 @@ class UpdateRates extends Command
         foreach ($orders_messages as $order_message) {
             // Get the most recent remarketing message before the order
             $remarketing_message = RemarketingMessage::whereNotNull('sent_at') // Ensure sent_at is not null
-                ->where('facebook_conversation_id', $order_message->facebook_conversation_id) // Match the same Facebook conversation
+                ->where('facebook_conversation', $order_message->facebook_conversation_id) // Match the same Facebook conversation
                 ->where('sent_at', '<', $order_message->created_at) // Sent before the order message creation time
                 ->orderBy('sent_at', 'desc') // Order by sent_at in descending order to get the most recent one
                 ->first(); // Get the first result (most recent)
