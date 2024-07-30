@@ -38,6 +38,6 @@ class FacebookMessage extends Model
     }
     public function facebook_conversation()
     {
-        return $this->belongsTo(FacebookConversation::class, 'facebook_conversation_id');
+        return $this->belongsTo(FacebookConversation::class, 'facebook_conversation_id', 'facebook_conversation_id');
     }
 }

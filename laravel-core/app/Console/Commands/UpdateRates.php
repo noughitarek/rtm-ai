@@ -33,7 +33,10 @@ class UpdateRates extends Command
     public function handle()
     {
         // Fetch all Facebook messages matching the given pattern
-        $orders_messages = FacebookMessage::where('message', 'like', '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%')->get();
+        $orders_messages = FacebookMessage::with('facebook_conversation')
+        ->where('message', 'like', '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%')
+        ->get();
+
 
         Template::query()->update(['total_used' => 0, 'total_orders' => 0]);
         Program::query()->update(['total_used' => 0, 'total_orders' => 0]);
@@ -41,11 +44,10 @@ class UpdateRates extends Command
         // Loop through each order message
         foreach ($orders_messages as $order_message) {
             // Get the most recent remarketing message before the order
-            $remarketing_message = RemarketingMessage::whereNotNull('sent_at') // Ensure sent_at is not null
-                ->where('facebook_conversation', $order_message->facebook_conversation_id) // Match the same Facebook conversation
+            $remarketing_message = RemarketingMessage::where('facebook_conversation', $order_message->facebook_conversation->id) // Match the same Facebook conversation
                 ->where('sent_at', '<', $order_message->created_at) // Sent before the order message creation time
                 ->orderBy('sent_at', 'desc') // Order by sent_at in descending order to get the most recent one
-                ->first(); // Get the first result (most recent)
+                ->first(); // Get the first result (most recent)*/
 
             // If a remarketing message is found, increment the total orders
             if ($remarketing_message) {
