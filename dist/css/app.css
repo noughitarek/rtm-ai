@@ -15550,16 +15550,13 @@ html body{
     position: relative;
 }
 .mobile-menu{
-    position: fixed;
-    z-index: 60;
-    margin-left: -2rem;
-    margin-right: -2rem;
-    margin-top: -1.25rem;
-    margin-bottom: 1.5rem;
-    width: 100%;
-    border-bottom-width: 1px;
-    border-color: rgb(255 255 255 / 0.08);
-    background-color: rgb(var(--color-primary) / 0.9);
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  width: 100%;
+  border-bottom-width: 1px;
+  border-color: rgb(255 255 255 / 0.08);
+  background-color: rgb(var(--color-primary) / 0.9);
 }
 .dark .mobile-menu{
     --tw-bg-opacity: 1;

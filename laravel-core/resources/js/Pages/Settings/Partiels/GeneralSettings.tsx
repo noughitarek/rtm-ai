@@ -6,6 +6,7 @@ import { Inertia } from '@inertiajs/inertia';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
 import CustomNumber from "@/Base-components/Forms/CustomNumber";
+import { Link } from "@inertiajs/react";
 
 const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) => {
     const [id, setId] = useState<string>(settings.id)
@@ -13,6 +14,7 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
     const [minimum_pourcentage, setMinimum_pourcentage] = useState<string>(settings.minimum_pourcentage)
     const [max_per_minute, setMax_per_minute] = useState<string>(settings.max_per_minute)
     const [saving, setSaving] = useState<boolean>(false)
+    const [updatingRates, setUpdatingRates] = useState<boolean>(false)
 
     const handleSubmit = async () => {
         setSaving(true)
@@ -33,6 +35,20 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
             }
         });
     }
+    const handleUpdateRateSubmit = async () => {
+        setUpdatingRates(true)
+        
+        Inertia.get(route('refrech.rates'),{}, {
+            onSuccess: () => {
+                toast.success('Rates updated successfully');
+                setUpdatingRates(false)
+            },
+            onError: (errors) => {
+                toast.error('Failed updating rates', errors);
+                setUpdatingRates(false)
+            }
+        });
+    }
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -44,6 +60,10 @@ const GeneralSettings: React.FC<{ settings: DynamicSetting }> = ({ settings }) =
                     <button onClick={handleSubmit} disabled={saving} className="btn btn-outline-secondary hidden sm:flex">
                         { !saving && (<><Save className="w-4 h-4 mr-2"/> Save</>)}
                         { saving && (<><ReactLoading type="spin" color="green" height={18} width={18} />&nbsp; Saving</>)}
+                    </button>&nbsp;
+                    <button className="btn btn-primary" disabled={updatingRates} onClick={handleUpdateRateSubmit}>
+                        { !updatingRates && (<> Update rates</>)}
+                        { updatingRates && (<><ReactLoading type="spin" color="green" height={18} width={18} />&nbsp; Updating</>)}
                     </button>
                 </div>
                 <div className="p-5">

@@ -31,9 +31,14 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $currentRoute = Route::current();
-        $controllerClass = get_class($currentRoute->getController());
-        $controllerMethod = $currentRoute->getActionMethod();
-
+        if($currentRoute->getController() != null){
+            $controllerClass = get_class($currentRoute->getController());
+            $controllerMethod = $currentRoute->getActionMethod();
+        }else{
+            
+            $controllerClass = "";
+            $controllerMethod = "";
+        }
         $menu = config('menu');
         foreach($menu as $sub_menu)
         {

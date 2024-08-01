@@ -26,9 +26,9 @@ class StoreTemplateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'group_id' => 'required|exists:templates_groups,id',
-            'photo.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'video.*' => 'nullable|file|mimes:mp4,avi,mov,wmv|max:20480',
-            'audio.*' => 'nullable|file|mimes:mp3,wav|max:10240',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'videos.*' => 'nullable|file|mimes:mp4,avi,mov,wmv|max:20480',
+            'audios.*' => 'nullable|file|mimes:mp3,wav|max:10240',
             'message' => 'nullable|string',
         ];
     }

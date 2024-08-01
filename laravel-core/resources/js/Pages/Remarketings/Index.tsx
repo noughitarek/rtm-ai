@@ -259,13 +259,13 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
                                         </div>
                                     </td>
                                     <td className="w-40">
-                                    { !remarketing.is_active ? (
+                                    { Number(remarketing.is_active) === 0 ? (
                                         <div className="flex items-center justify-center text-danger" onClick={(event)=>toggleRemarketingStatus(event, remarketing.id)}>
-                                            <XSquare className="w-4 h-4 mr-2" /> Inactive
+                                            <XSquare className="w-4 h-4 mr-2" /> Inactive {remarketing.is_active}
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center text-success" onClick={(event)=>toggleRemarketingStatus(event, remarketing.id)}>
-                                            <CheckSquare className="w-4 h-4 mr-2" /> Active
+                                            <CheckSquare className="w-4 h-4 mr-2" /> Active {remarketing.is_active}
                                         </div>
                                     )}
                                     </td>

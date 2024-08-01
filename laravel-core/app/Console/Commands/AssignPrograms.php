@@ -32,8 +32,9 @@ class AssignPrograms extends Command
         $min_pourc = config('settings.minimum_pourcentage');
 
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->take(config('settings.max_per_minute'))->get();
-        
+
         foreach($remarketings as $remarketing){
+            if($remarketing->id != 5)continue;
             $conversations = FacebookConversation::whereNull('program_id')
             ->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)
             ->where('started_at', '>', $remarketing->created_at)
@@ -87,7 +88,7 @@ class AssignPrograms extends Command
         foreach($conversation->program->records as $record)
         {
             $startedAt = Carbon::parse($conversation->started_at);
-            $sendAt = $startedAt->copy()->addSeconds($record->send_after);
+            $sendAt = $startedAt->addSeconds((int)$record->send_after);
             
             RemarketingMessage::create([
                 "remarketing" => $remarketing->id,

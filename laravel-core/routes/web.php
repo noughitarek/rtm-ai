@@ -91,6 +91,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
         Route::get('oauth/facebook/logout', 'logout');
     });
+    Route::get('/refrech-rates', function () {
+        Artisan::call('app:update-rates');
+        return redirect()->back()->with('status', 'Command executed successfully!');
+    })->name('refrech.rates');
+    
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.save');
 });

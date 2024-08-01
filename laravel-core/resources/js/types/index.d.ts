@@ -139,7 +139,7 @@ export interface Remarketing{
     programs_group: ProgramsGroup;
     templates_group: TemplatesGroup;
     category: RemarketingsCategory;
-    is_active: boolean;
+    is_active: number;
     created_at: Date;
     updated_at: Date;
     created_by: User;

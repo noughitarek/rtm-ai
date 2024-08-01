@@ -26,6 +26,7 @@ class RemarketingController extends Controller
         ->orderBy('id', 'desc')
         ->get()->toArray();
         
+
         return Inertia::render('Remarketings/Index', [
             'categories' => $categories,
             'from' => 1,

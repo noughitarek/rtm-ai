@@ -16,23 +16,8 @@ class FacebookPage extends Model
     public function Send_Template(Template $template, FacebookConversation $conversation)
     {
         try{
-            if($template->message != null){
-                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                    'access_token' => $this->access_token,
-                    'messaging_type' => 'MESSAGE_TAG',
-                    'recipient' => ['id' => $conversation->facebook_user_id],
-                    'message' => ['text' => $template->message],
-                    'tag' => 'ACCOUNT_UPDATE'
-                ]);
-            }
             $send = [];
 
-            if ($template->photos != null) {
-                foreach (explode(',', $template->photos) as $photo) {
-                    $send[] = ["type" => "image", "content" => $photo];
-                }
-            }
-    
             if ($template->videos != null) {
                 foreach (explode(',', $template->videos) as $video) {
                     $send[] = ["type" => "video", "content" => $video];
@@ -44,6 +29,13 @@ class FacebookPage extends Model
                     $send[] = ["type" => "audio", "content" => $audio];
                 }
             }
+            
+            if ($template->photos != null) {
+                foreach (explode(',', $template->photos) as $photo) {
+                    $send[] = ["type" => "image", "content" => $photo];
+                }
+            }
+    
 
             foreach($send as $data){
                 $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
@@ -58,6 +50,15 @@ class FacebookPage extends Model
                             ],
                         ]
                     ],
+                    'tag' => 'ACCOUNT_UPDATE'
+                ]);
+            }
+            if($template->message != null){
+                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                    'access_token' => $this->access_token,
+                    'messaging_type' => 'MESSAGE_TAG',
+                    'recipient' => ['id' => $conversation->facebook_user_id],
+                    'message' => ['text' => $template->message],
                     'tag' => 'ACCOUNT_UPDATE'
                 ]);
             }

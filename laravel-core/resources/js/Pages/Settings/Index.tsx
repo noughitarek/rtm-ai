@@ -1,5 +1,5 @@
 import Webmaster from "@/Layouts/Webmaster";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import { Activity, Box, Lock, MoreHorizontal, Settings as SettingsIcon } from "lucide-react";
 import Page from "@/Base-components/Page";
