@@ -82,6 +82,16 @@ const PagesIndex: React.FC<PageProps<{ conversations: Conversation[], from:numbe
                                             <span className="text-gray-500">Can't reply</span>
                                         </>)}
                                     </div>
+                                    <div className="flex items-center">
+                                        {conversation.program && (<>
+                                            <ToggleRight className="h-4 w-4 text-gray-500 mr-1" />
+                                            <span className="text-gray-500">{conversation.program.name}</span>
+                                        </>)}
+                                        {!conversation.can_reply && (<>
+                                            <ToggleLeft className="h-4 w-4 text-gray-500 mr-1" />
+                                            <span className="text-gray-500">Can't reply</span>
+                                        </>)}
+                                    </div>
                                 </td>
                                 <td className="!py-3.5">
                                     <div className="flex items-center">
