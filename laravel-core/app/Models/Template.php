@@ -25,7 +25,7 @@ class Template extends Model
     {
         return $this->belongsTo(TemplatesGroup::class, 'group_id');
     }
-    public function total_orders()
+    public function count_total_orders()
     {
         $conversations = RemarketingMessage::whereNotNull('sent_at')
             ->where("template", $this->id)
@@ -46,7 +46,7 @@ class Template extends Model
                 ->first()
                 ->id
             )
-            ->where('sent_at', '<', $orders_message->created_at)
+            ->where('sent_at', '<', $orders_message->created_at->addHour())
             ->orderBy('sent_at', 'desc')
             ->first();
 
@@ -54,7 +54,6 @@ class Template extends Model
                 $total_orders++;
             }
         }
-
         $this->total_orders = $total_orders;
         $this->save();
     }

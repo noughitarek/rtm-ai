@@ -31,7 +31,7 @@ class Program extends Model
     {
         return $this->hasMany(ProgramRecord::class, 'program_id')->orderby('id', 'asc');
     }
-    public function total_orders()
+    public function count_total_orders()
     {
         $conversations = FacebookConversation::where("program_id", $this->id)
         ->pluck("facebook_conversation_id");
@@ -40,25 +40,7 @@ class Program extends Model
         ->whereIN("facebook_conversation_id", $conversations)
         ->get();
         
-        $total_orders = 0;
-        foreach($orders_messages as $orders_message){
-
-            $remarketing_message = RemarketingMessage::whereNotNull('sent_at')
-            ->where('facebook_conversation', 
-                FacebookConversation::where("facebook_conversation_id", $orders_message->facebook_conversation_id)
-                ->first()
-                ->id
-            )
-            ->where('sent_at', '<', $orders_message->created_at)
-            ->orderBy('sent_at', 'desc')
-            ->first();
-
-            if($remarketing_message){
-                $total_orders++;
-            }
-        }
-
-        $this->total_orders = $total_orders;
+        $this->total_orders = $orders_messages->count();
         $this->save();
     }
 }
