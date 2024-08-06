@@ -40,7 +40,11 @@ class AssignTemplates extends Command
             ->get();
 
             foreach($messages as $message){
-                if($message->template == null){
+
+                $remarketing = Remarketing::find($remarketing->id);
+                $message = RemarketingMessage::find($message->id);
+                
+                if(($remarketing && $remarketing->is_active == true) && ($message && $message->template == null)){
                     $this->pick_template($message);
                 }
             }

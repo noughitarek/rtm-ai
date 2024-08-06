@@ -27,7 +27,10 @@ class SendRemarketingMessages extends Command
      */
     public function handle()
     {
-        $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->get();
+        $remarketings = Remarketing::whereNull('deleted_at')
+        ->whereNull('deleted_by')
+        ->where('is_active', true)
+        ->get();
 
         foreach($remarketings as $remarketing){
             $currentTimePlus60Seconds = now()->addSeconds(60);
@@ -38,9 +41,15 @@ class SendRemarketingMessages extends Command
             ->get();
             
             foreach($messages as $message){
-                if($message->conversation->page->Send_Template($message->template_row, $message->conversation)){
-                    $message->sent_at = now();
-                    $message->save();
+
+                $remarketing = Remarketing::find($remarketing->id);
+                $message = RemarketingMessage::find($message->id);
+                
+                if(($remarketing && $remarketing->is_active == true) && ($message && $message->sent_at == null)){
+                    if($message->conversation->page->Send_Template($message->template_row, $message->conversation)){
+                        $message->sent_at = now();
+                        $message->save();
+                    }
                 }
             }
         }

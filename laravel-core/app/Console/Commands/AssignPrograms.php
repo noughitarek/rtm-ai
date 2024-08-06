@@ -34,7 +34,7 @@ class AssignPrograms extends Command
         $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->take(config('settings.max_per_minute'))->get();
 
         foreach($remarketings as $remarketing){
-            
+
             $conversations = FacebookConversation::whereNull('program_id')
             ->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)
             ->where('started_at', '>', $remarketing->created_at)
@@ -42,43 +42,47 @@ class AssignPrograms extends Command
             
             foreach($conversations as $conversation){
 
-                $programs = $remarketing->programsGroup->programs;
-                $total_orders = $programs->sum('total_orders');
-                $total_programs = $programs->count();
-                
-                if ($total_programs > 0) {
-                    if($total_programs*$min_pourc > 100){
-                        $min_pourc = 75/$total_programs;
-                    }
+                $remarketing = Remarketing::find($remarketing->id);
+                $conversation = FacebookConversation::find($conversation->id);
+                if(($remarketing && $remarketing->is_active) && ($conversation && $conversation->program_id)){
+                    $programs = $remarketing->programsGroup->programs;
+                    $total_orders = $programs->sum('total_orders');
+                    $total_programs = $programs->count();
                     
-                    $programsPourcentage = [];
-                    foreach($programs as $program){
-                        $programPourcentage = [];
-                        $programPourcentage['program'] = $program->id;
-                        if($total_orders == 0){
-                            $programPourcentage['pourcentage'] = 100/$total_programs;;
-                        }else{
-                            $programPourcentage['pourcentage'] = $min_pourc + (100 - $total_programs * $min_pourc) * $program->total_orders / $total_orders;
+                    if ($total_programs > 0) {
+                        if($total_programs*$min_pourc > 100){
+                            $min_pourc = 75/$total_programs;
                         }
-                        $programsPourcentage[] = $programPourcentage;
-                    }
-
-                    $random = rand(0, 100);
-                    $cumulativePercentage = 0;
-
-                    foreach ($programsPourcentage as $programPourcentage) {
-                        $cumulativePercentage += $programPourcentage['pourcentage'];
-                        if ($random <= $cumulativePercentage) {
-                            $conversation->program_id = $programPourcentage['program'];
-                            break;
+                        
+                        $programsPourcentage = [];
+                        foreach($programs as $program){
+                            $programPourcentage = [];
+                            $programPourcentage['program'] = $program->id;
+                            if($total_orders == 0){
+                                $programPourcentage['pourcentage'] = 100/$total_programs;;
+                            }else{
+                                $programPourcentage['pourcentage'] = $min_pourc + (100 - $total_programs * $min_pourc) * $program->total_orders / $total_orders;
+                            }
+                            $programsPourcentage[] = $programPourcentage;
                         }
-                    }
 
-                }else {
-                    $conversation->program_id = null;
+                        $random = rand(0, 100);
+                        $cumulativePercentage = 0;
+
+                        foreach ($programsPourcentage as $programPourcentage) {
+                            $cumulativePercentage += $programPourcentage['pourcentage'];
+                            if ($random <= $cumulativePercentage) {
+                                $conversation->program_id = $programPourcentage['program'];
+                                break;
+                            }
+                        }
+
+                    }else {
+                        $conversation->program_id = null;
+                    }
+                    $conversation->save();
+                    $this->schudle_messages($remarketing, $conversation);
                 }
-                $conversation->save();
-                $this->schudle_messages($remarketing, $conversation);
             }
         }
 
