@@ -39,7 +39,15 @@ class UpdateRates extends Command
         foreach($groups as $group){
             
             foreach ($group->programs as $program) {
-                $program->total_orders();
+                $program->count_total_orders();
+
+                $conversations_ids = FacebookConversation::where('program_id', $program->id)->pluck('id');
+                $messages = RemarketingMessage::whereIn('facebook_conversation', $conversations_ids)
+                ->whereNotNull('sent_at')
+                ->get();
+
+                $program->total_used = $messages->count();
+                $program->save();
             }
         }
         $groups = TemplatesGroup::whereNull('deleted_by')
@@ -49,7 +57,14 @@ class UpdateRates extends Command
         foreach($groups as $group){
             
             foreach ($group->templates as $template) {
-                $template->total_orders();
+                $template->count_total_orders();
+
+                $messages = RemarketingMessage::where("template", $template->id)
+                ->whereNotNull('sent_at')
+                ->get();
+                
+                $template->total_used = $messages->count();
+                $template->save();
             }
         }
     }
