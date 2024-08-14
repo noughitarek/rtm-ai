@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Artisan;
 
 
 
-
+Schedule::command('app:assign-remarketings')->everyMinute()->runInBackground();
 Schedule::command('app:get-latest-conversations')->everyMinute()->runInBackground();
 Schedule::command('app:assign-programs')->everyMinute()->runInBackground();
 Schedule::command('app:assign-templates')->everyMinute()->runInBackground();

@@ -31,11 +31,15 @@ class AssignPrograms extends Command
     {
         $min_pourc = config('settings.minimum_pourcentage');
 
-        $remarketings = Remarketing::whereNull('deleted_at')->whereNull('deleted_by')->where('is_active', true)->take(config('settings.max_per_minute'))->get();
+        $remarketings = Remarketing::whereNull('deleted_at')
+        ->whereNull('deleted_by')
+        ->where('is_active', true)
+        ->get();
 
         foreach($remarketings as $remarketing){
             
             $conversations = FacebookConversation::whereNull('program_id')
+            ->where('remarketing_id', $remarketing->id)
             ->where('facebook_page_id', $remarketing->facebookPage->facebook_page_id)
             ->where('started_at', '>', $remarketing->created_at)
             ->get();
@@ -58,7 +62,7 @@ class AssignPrograms extends Command
                         if($total_orders == 0){
                             $programPourcentage['pourcentage'] = 100/$total_programs;;
                         }else{
-                            $programPourcentage['pourcentage'] = $min_pourc + (100 - $total_programs * $min_pourc) * $program->total_orders / $total_orders;
+                            $programPourcentage['pourcentage'] = $min_pourc + (100 - $total_programs * $min_pourc) * ($program->total_orders/$program->total_used) / $total_orders;
                         }
                         $programsPourcentage[] = $programPourcentage;
                     }

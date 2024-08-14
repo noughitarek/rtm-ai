@@ -77,7 +77,7 @@ class AssignTemplates extends Command
                 if($total_orders == 0){
                     $templatePourcentage['pourcentage'] = 100/$total_templates;;
                 }else{
-                    $templatePourcentage['pourcentage'] = $min_pourc + (100 - $total_templates * $min_pourc) * $template->total_orders / $total_orders;
+                    $templatePourcentage['pourcentage'] = $min_pourc + (100 - $total_templates * $min_pourc) * ($template->total_orders/$program->total_used) / $total_orders;
                 }
                 $templatesPourcentage[] = $templatePourcentage;
             }
