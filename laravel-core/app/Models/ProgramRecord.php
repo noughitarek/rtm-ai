@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProgramRecord extends Model
 {
     use HasFactory;
-    protected $fillable = ["template_id", "templates_group_id", "program_id", "send_after"];
+    protected $fillable = ["template_id", "templates_group_id", "program_id", "order_status", "send_after"];
 
     public function template()
     {

@@ -73,6 +73,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                 template: 0,
                 send_after: 0,
                 unit_of_time: 0,
+                order_status: 0,
             }
         ];
         programForm.setData(prevData => ({
@@ -206,6 +207,19 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                         ))}
                                     </select>
                                     <div className="form-help text-right mt-2">Unit of time</div>
+                                </div>
+                                <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
+                                    <select
+                                        className="form-control"
+                                        value={program.order_status || ''}
+                                        required
+                                        onChange={(e) => handleRecordChange(index, 'order_status', +e.target.value)}
+                                    >
+                                        <option value="0">Any</option>
+                                        <option value="1">Only if ordered</option>
+                                        <option value="-1">Only if not ordered</option>
+                                    </select>
+                                    <div className="form-help text-right mt-2">Order</div>
                                 </div>
                                 <div className="w-full mt-3 xl:mt-0 flex-1 ms-2">
                                     <select

@@ -542,101 +542,142 @@ const TemplatesIndex: React.FC<
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {template.photos.map(
-                                                                (
-                                                                    photo,
-                                                                    index
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        className="flex items-center"
-                                                                    >
-                                                                        <Image className="h-4 w-4 text-gray-500 mr-2" />
-                                                                        <span className="text-sm text-gray-500">
-                                                                            <a
-                                                                                target="_blank"
-                                                                                href={
-                                                                                    photo
+                                                            {template.photos.map((photo,index) => {
+                                                                    if(index == 0){
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    index
                                                                                 }
+                                                                                className="flex items-center"
                                                                             >
-                                                                                {photo.length >
-                                                                                10
-                                                                                    ? photo.substring(
-                                                                                          0,
-                                                                                          10
-                                                                                      ) +
-                                                                                      "..."
-                                                                                    : photo}
-                                                                            </a>
-                                                                        </span>
-                                                                    </div>
-                                                                )
+                                                                                <Image className="h-4 w-4 text-gray-500 mr-2" />
+                                                                                <span className="text-sm text-gray-500">
+                                                                                    <a
+                                                                                        target="_blank"
+                                                                                        href={
+                                                                                            photo
+                                                                                        }
+                                                                                    >
+                                                                                        {photo.length >
+                                                                                        10
+                                                                                            ? photo.substring(
+                                                                                                  0,
+                                                                                                  10
+                                                                                              ) +
+                                                                                              "..."
+                                                                                            : photo}
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>)
+                                                                    }
+                                                                    if(index == 1){
+                                                                        return (
+                                                                        <div
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            className="flex items-center"
+                                                                        >
+                                                                            <Image className="h-4 w-4 text-gray-500 mr-2" />
+                                                                            <span className="text-sm text-gray-500">
+                                                                                .. {template.photos.length-1} more
+                                                                            </span>
+                                                                        </div>)
+                                                                    }
+                                                                }
                                                             )}
-                                                            {template.videos.map(
-                                                                (
-                                                                    video,
-                                                                    index
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        className="flex items-center"
-                                                                    >
-                                                                        <Film className="h-4 w-4 text-gray-500 mr-2" />
-                                                                        <span className="text-sm text-gray-500">
-                                                                            <a
-                                                                                target="_blank"
-                                                                                href={
-                                                                                    video
+                                                            {template.videos.map((video, index) => {
+                                                                    if(index == 0){
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    index
                                                                                 }
+                                                                                className="flex items-center"
                                                                             >
-                                                                                {video.length >
-                                                                                10
-                                                                                    ? video.substring(
-                                                                                          0,
-                                                                                          10
-                                                                                      ) +
-                                                                                      "..."
-                                                                                    : video}
-                                                                            </a>
-                                                                        </span>
-                                                                    </div>
-                                                                )
+                                                                                <Film className="h-4 w-4 text-gray-500 mr-2" />
+                                                                                <span className="text-sm text-gray-500">
+                                                                                    <a
+                                                                                        target="_blank"
+                                                                                        href={
+                                                                                            video
+                                                                                        }
+                                                                                    >
+                                                                                        {video.length >
+                                                                                        10
+                                                                                            ? video.substring(
+                                                                                                  0,
+                                                                                                  10
+                                                                                              ) +
+                                                                                              "..."
+                                                                                            : video}
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>)
+                                                                    }
+                                                                    if(index == 1){
+                                                                        return (
+                                                                        <div
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            className="flex items-center"
+                                                                        >
+                                                                            <Film className="h-4 w-4 text-gray-500 mr-2" />
+                                                                            <span className="text-sm text-gray-500">
+                                                                                .. {template.videos.length-1} more
+                                                                            </span>
+                                                                        </div>)
+                                                                    }
+                                                                
+                                                            }
                                                             )}
-                                                            {template.audios.map(
-                                                                (
-                                                                    audio,
-                                                                    index
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        className="flex items-center"
-                                                                    >
-                                                                        <Headphones className="h-4 w-4 text-gray-500 mr-2" />
-                                                                        <span className="text-sm text-gray-500">
-                                                                            <a
-                                                                                target="_blank"
-                                                                                href={
-                                                                                    audio
+                                                            {template.audios.map((audio, index) => {
+                                                                    if(index == 0){
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    index
                                                                                 }
+                                                                                className="flex items-center"
                                                                             >
-                                                                                {audio.length >
-                                                                                10
-                                                                                    ? audio.substring(
-                                                                                          0,
-                                                                                          10
-                                                                                      ) +
-                                                                                      "..."
-                                                                                    : audio}
-                                                                            </a>
-                                                                        </span>
-                                                                    </div>
-                                                                )
+                                                                                <Headphones className="h-4 w-4 text-gray-500 mr-2" />
+                                                                                <span className="text-sm text-gray-500">
+                                                                                    <a
+                                                                                        target="_blank"
+                                                                                        href={
+                                                                                            audio
+                                                                                        }
+                                                                                    >
+                                                                                        {audio.length >
+                                                                                        10
+                                                                                            ? audio.substring(
+                                                                                                  0,
+                                                                                                  10
+                                                                                              ) +
+                                                                                              "..."
+                                                                                            : audio}
+                                                                                    </a>
+                                                                                </span>
+                                                                            </div>)
+                                                                    }
+                                                                    if(index == 1){
+                                                                        return (
+                                                                        <div
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            className="flex items-center"
+                                                                        >
+                                                                            <Headphones className="h-4 w-4 text-gray-500 mr-2" />
+                                                                            <span className="text-sm text-gray-500">
+                                                                                .. {template.audios.length-1} more
+                                                                            </span>
+                                                                        </div>)
+                                                                    }
+                                                                
+                                                            }
                                                             )}
                                                             {template.message && (
                                                                 <div className="flex items-center">

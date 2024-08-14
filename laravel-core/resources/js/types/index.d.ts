@@ -65,6 +65,7 @@ export interface Program{
     group: ProgramsGroup;
     reuse_after: number;
     records: ProgramRecord[];
+    order_status: number;
     total_used: number;
     total_orders: number;
     total_responses: number;
@@ -85,6 +86,7 @@ export interface ProgramRecord{
     group?: number | TemplatesGroup;
     template?: number | Template; 
     send_after: number;
+    order_status: number;
     unit_of_time: number;
 }
 
