@@ -36,7 +36,6 @@ class FacebookPage extends Model
                 }
             }
     
-
             foreach($send as $data){
                 $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
                     'access_token' => $this->access_token,
