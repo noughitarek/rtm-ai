@@ -258,6 +258,7 @@ const EditProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_group
                                 </div>
                             </div>
                         ))}
+                        <Button className="btn btn-primary" onClick={moreRecords}>More records</Button>&nbsp;
                         {saveButton}
                     </Grid>
                 </Page>

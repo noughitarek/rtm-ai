@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Template;
 use App\Models\TemplatesGroup;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTemplatesGroupRequest;
 use App\Http\Requests\UpdateTemplatesGroupRequest;
@@ -66,6 +69,40 @@ class TemplatesGroupController extends Controller
         }
     }
 
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(TemplatesGroup $group)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newGroup = $group->replicate();
+            $newGroup->name = $newGroup->name . ' (Copy)';
+            $newGroup->created_at = now();
+            $newGroup->created_by = Auth::id();
+            $newGroup->updated_at = now();
+            $newGroup->updated_by = Auth::id();
+            $newGroup->save();
+
+            foreach ($group->templates as $template) {
+                $newTemplate = $template->replicate();
+                $newTemplate->group_id = $newGroup->id;
+                $newTemplate->created_at = now();
+                $newTemplate->created_by = Auth::id();
+                $newTemplate->updated_at = now();
+                $newTemplate->updated_by = Auth::id();
+                $newTemplate->save();
+            }
+            
+            DB::commit();
+            return redirect()->route('programs.groups.index')->with('success', 'Group duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating group: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the group.');
+        }
+    }
     /**
      * Remove the specified resource from storage.
      */

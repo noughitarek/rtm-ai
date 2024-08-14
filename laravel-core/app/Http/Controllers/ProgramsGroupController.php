@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Program;
 use App\Models\ProgramsGroup;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProgramsGroupRequest;
@@ -48,6 +50,47 @@ class ProgramsGroupController extends Controller
     public function edit(ProgramsGroup $group)
     {
         return Inertia::render('Programs/EditGroup', ['group' => $group]);
+    }
+
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(ProgramsGroup $group)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newGroup = $group->replicate();
+            $newGroup->name = $newGroup->name . ' (Copy)';
+            $newGroup->created_at = now();
+            $newGroup->created_by = Auth::id();
+            $newGroup->updated_at = now();
+            $newGroup->updated_by = Auth::id();
+            $newGroup->save();
+
+            foreach ($group->programs as $program) {
+                $newProgram = $program->replicate();
+                $newProgram->group_id  = $newGroup->id;
+                $newProgram->created_at = now();
+                $newProgram->created_by = Auth::id();
+                $newProgram->updated_at = now();
+                $newProgram->updated_by = Auth::id();
+                $newProgram->save();
+
+                foreach ($program->records as $record) {
+                    $newRecord = $record->replicate();
+                    $newRecord->program_id = $newProgram->id;
+                    $newRecord->save();
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('programs.index')->with('success', 'Group duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating group: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the group.');
+        }
     }
 
     /**

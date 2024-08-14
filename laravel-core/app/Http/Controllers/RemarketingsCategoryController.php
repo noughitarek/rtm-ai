@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Remarketing;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\RemarketingsCategory;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +64,42 @@ class RemarketingsCategoryController extends Controller
             return redirect()->route('programs.index')->with('success', 'Category of remarketings edited successfully.');
         } else {
             return redirect()->back()->with('error', 'Category of remarketings could not be edited.');
+        }
+    }
+
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(RemarketingsCategory $category)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newCategory = $category->replicate();
+            $newCategory->name = $category->name . ' (Copy)';
+            $newCategory->created_at = now();
+            $newCategory->created_by = Auth::id();
+            $newCategory->updated_at = now();
+            $newCategory->updated_by = Auth::id();
+            $newCategory->save();
+
+            foreach ($category->remarketings as $remarketing) {
+                $newRemarketing = $remarketing->replicate();
+                $newRemarketing->category = $newCategory->id;
+                $newRemarketing->created_at = now();
+                $newRemarketing->created_by = Auth::id();
+                $newRemarketing->updated_at = now();
+                $newRemarketing->updated_by = Auth::id();
+                $newRemarketing->is_active = false;
+                $newRemarketing->save();
+            }
+
+            DB::commit();
+            return redirect()->route('remarketings.index')->with('success', 'Remarketing duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating remarketing: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the remarketing.');
         }
     }
 

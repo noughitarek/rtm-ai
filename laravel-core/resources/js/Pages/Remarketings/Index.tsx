@@ -3,27 +3,134 @@ import React, {useEffect, useState} from 'react';
 import { PageProps, RemarketingsCategory, Remarketing } from '@/types';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
-import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User, XSquare } from 'lucide-react';
+import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Copy, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User, XSquare } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import DeleteModal from '@/Components/DeleteModal';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
+import ConfirmModal from '@/Components/ConfirmModal';
 
 const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[], from:number, to:number, total:number }>> = ({ auth, categories, from, to, total, menu }) => {
+    
+    // Category delete modal
     const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
     const [isDeletingCategory, setIsDeletingCategory] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
+    const handleDeleteCategoryClick = (event: React.MouseEvent<HTMLButtonElement>, category: number) => {
+        event.preventDefault();
+        categoryForm.setData({ category: category });
+        setShowDeleteCategoryModal(true);
+    };
+    const handleDeleteCategory = async () => {
+        setIsDeletingCategory(true);
+        try {
+            await categoryForm.delete(route('remarketings.categories.destroy', { id: categoryForm.data.category }));
+            toast.success('Category of remarketings has been deleted successfully');
+            router.get(route('remarketings.index'));
+        } catch(error) {
+            toast.error('Error deleting the category of remarketings');
+            console.error('Error details:', error);
+        } finally {
+            setIsDeletingCategory(false);
+            setShowDeleteCategoryModal(false);
+        }
+    };
 
+    // Remarketing delete modal
     const [showDeleteRemarketingModal, setShowDeleteRemarketingModal] = useState(false);
     const [isDeletingRemarketing, setIsDeletingRemarketing] = useState(false);
+    const handleDeleteRemarketingClick = (event: React.MouseEvent<HTMLButtonElement>, remarketing: number) => {
+        event.preventDefault();
+        remarketingForm.setData({ remarketing: remarketing });
+        setShowDeleteRemarketingModal(true);
+    };
+    const handleDeleteRemarketing = async () => {
+        setIsDeletingRemarketing(true);
+        try {
+            await remarketingForm.delete(route('remarketings.destroy', { id: remarketingForm.data.remarketing }));
+            toast.success('Remarketing has been deleted successfully');
+            router.get(route('remarketings.index'));
+        } catch(error) {
+            toast.error('Error deleting the remarketing');
+            console.error('Error details:', error);
+        } finally {
+            setIsDeletingRemarketing(false);
+            setShowDeleteRemarketingModal(false);
+        }
+    };
 
-    const remarketingForm = useForm<{ remarketing: number }>({ remarketing: 0 });
-    const categoryForm = useForm<{ category: number }>({ category: 0 });
+    // Category duplicate modal
+    const [showDuplicateCategoryModal, setShowDuplicateCategoryModal] = useState(false);
+    const [isDuplicatingCategory, setIsDuplicatingCategory] = useState(false);
+    const handleDuplicateCategoryClick = (event: React.MouseEvent<HTMLButtonElement>, category: number) => {
+        event.preventDefault();
+        categoryForm.setData({ category: category });
+        setShowDuplicateCategoryModal(true);
+    };
+    const handleDuplicateCategory = async () => {
+        setIsDuplicatingCategory(true);
+        try {
+            await categoryForm.post(route('remarketings.categories.duplicate', { id: categoryForm.data.category }));
+            toast.success('Category of remarketings has been duplicated successfully');
+            router.get(route('remarketings.index'));
+        } catch(error) {
+            toast.error('Error duplicating the category of remarketings');
+            console.error('Error details:', error);
+        } finally {
+            setIsDuplicatingCategory(false);
+            setShowDuplicateCategoryModal(false);
+        }
+    };
 
+    // Remarketing duplicate modal
+    const [showDuplicateRemarketingModal, setShowDuplicateRemarketingModal] = useState(false);
+    const [isDuplicatingRemarketing, setIsDuplicatingRemarketing] = useState(false);
+    const handleDuplicateRemarketingClick = (event: React.MouseEvent<HTMLButtonElement>, remarketing: number) => {
+        event.preventDefault();
+        remarketingForm.setData({ remarketing: remarketing });
+        setShowDuplicateRemarketingModal(true);
+    };
+    const handleDuplicateRemarketing = async () => {
+        setIsDuplicatingRemarketing(true);
+        try {
+            const response = await remarketingForm.post(route('remarketings.duplicate', { id: remarketingForm.data.remarketing }));
+            console.log('Server Response:', response); // Log the response
+            toast.success('Remarketings has been duplicated successfully');
+            router.get(route('remarketings.index'));
+        } catch(error) {
+            toast.error('Error duplicating the remarketing');
+            console.error('Error details:', error);
+        } finally {
+            setIsDuplicatingRemarketing(false);
+            setShowDuplicateRemarketingModal(false);
+        }
+    };
+
+    // searning 
     const [activeCategory, setActiveCategory] = useState<RemarketingsCategory | null>(categories.length > 0 ? categories[0] : null);
     const [activeRemarketings, setActiveRemarketings] = useState<Remarketing[]>(categories.length > 0 ? categories[0].remarketings : []);
+    const [isSearching, setIsSearching] = useState(false);
+    useEffect(()=>{
+        setActiveRemarketings(activeCategory ? activeCategory.remarketings: [])
+    }, [activeCategory])
 
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsSearching(event.target.value != "")
+        const remarketingsToFilter = activeCategory ? activeCategory.remarketings : [];
+        const searchTerm = event.target.value.toLowerCase();
+        const filteredRemarketings = remarketingsToFilter.filter(item => 
+            (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+            (item.description && item.description.toLowerCase().includes(searchTerm)) ||
+            (item.created_by && item.created_by.name.toLowerCase().includes(searchTerm))
+        );
+        setActiveRemarketings(filteredRemarketings)
+    };
+    
+    // forms
+    const remarketingForm = useForm<{ remarketing: number }>({ remarketing: 0 });
+    const categoryForm = useForm<{ category: number }>({ category: 0 });
+    
+    // format Time Difference function
     const formatTimeDifference = (timestamp: number) => {
         const now = Date.now();
         const difference = now - timestamp;
@@ -47,79 +154,27 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
           return `${days} days ago`;
         }
       };
-    
+
+    // last activity
     const mostRecentActivity = activeRemarketings.length > 0
     ? activeRemarketings.reduce((latest, remarketing) => 
         new Date(remarketing.updated_at).getTime() > new Date(latest.updated_at).getTime() ? remarketing : latest
     ) 
     : null;
-
     const lastActivityBy = mostRecentActivity ? mostRecentActivity.updated_by.name : "";
     const lastActivityAt = mostRecentActivity ? formatTimeDifference(new Date(mostRecentActivity.updated_at).getTime()): "";
 
-
-    const handleDeleteRemarketing = async () => {
-        setIsDeletingRemarketing(true);
-        try {
-            await remarketingForm.delete(route('remarketings.destroy', { id: remarketingForm.data.remarketing }));
-            toast.success('Remarketing has been deleted successfully');
-            router.get(route('remarketings.index'));
-        } catch(error) {
-            toast.error('Error deleting the remarketing');
-            console.error('Error details:', error);
-        } finally {
-            setIsDeletingRemarketing(false);
-            setShowDeleteRemarketingModal(false);
-        }
-    };
-    const handleDeleteCategory = async () => {
-        setIsDeletingCategory(true);
-        try {
-            await categoryForm.delete(route('remarketings.categories.destroy', { id: categoryForm.data.category }));
-            toast.success('Category of remarketings has been deleted successfully');
-            router.get(route('remarketings.index'));
-        } catch(error) {
-            toast.error('Error deleting the category of remarketings');
-            console.error('Error details:', error);
-        } finally {
-            setIsDeletingCategory(false);
-            setShowDeleteCategoryModal(false);
-        }
-    };
-
-    const handleDeleteCategoryClick = (event: React.MouseEvent<HTMLButtonElement>, category: number) => {
-        event.preventDefault();
-        categoryForm.setData({ category: category });
-        setShowDeleteCategoryModal(true);
-    };
-
-    const handleDeleteRemarketingClick = (event: React.MouseEvent<HTMLButtonElement>, remarketing: number) => {
-        event.preventDefault();
-        remarketingForm.setData({ remarketing: remarketing });
-        setShowDeleteRemarketingModal(true);
-    };
-
+    // Modals cancel
     const handleDeleteCancel = () => {
         setShowDeleteCategoryModal(false);
         setShowDeleteRemarketingModal(false);
     };
-
-    useEffect(()=>{
-        setActiveRemarketings(activeCategory ? activeCategory.remarketings: [])
-    }, [activeCategory])
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setIsSearching(event.target.value != "")
-        const remarketingsToFilter = activeCategory ? activeCategory.remarketings : [];
-        const searchTerm = event.target.value.toLowerCase();
-        const filteredRemarketings = remarketingsToFilter.filter(item => 
-            (item.name && item.name.toLowerCase().includes(searchTerm)) ||
-            (item.description && item.description.toLowerCase().includes(searchTerm)) ||
-            (item.created_by && item.created_by.name.toLowerCase().includes(searchTerm))
-        );
-        setActiveRemarketings(filteredRemarketings)
+    const handleDuplicateCancel = () => {
+        setShowDuplicateCategoryModal(false);
+        setShowDuplicateRemarketingModal(false);
     };
 
+    // is active toggle
     const toggleRemarketingStatus = async (event: React.MouseEvent<HTMLDivElement>, remarketingId: number)  => {
         event.preventDefault();
         
@@ -132,6 +187,7 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
             console.error('Error details:', error);
         }
     }
+
     return (<>
         <Head title="Remarketings" />
         <Webmaster
@@ -147,42 +203,45 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
                         <Link href={route('remarketings.categories.create')} type="button" className="btn text-slate-600 dark:text-slate-300 w-full bg-white dark:bg-darkmode-300 dark:border-darkmode-300 mt-1">
                             <Blocks className="w-4 h-4 mr-2" /> Create a category
                         </Link>
-                        { activeCategory && (
-                            <Link href={route('remarketings.categories.edit', activeCategory.id)} className="btn text-slate-600 dark:text-slate-300 w-full bg-white dark:bg-darkmode-300 dark:border-darkmode-300 mt-1">
-                                <Edit2 className="w-4 h-4 mr-2 text-danger" /> Edit the category
-                            </Link>
-                        )}
-                        { activeCategory && (
-                        <Button 
-                          onClick={(event) => handleDeleteCategoryClick(event, activeCategory.id)}
-                          disabled={isDeletingCategory} 
-                          className="btn text-slate-600 dark:text-slate-300 w-full dark:bg-darkmode-300 dark:border-darkmode-300 mt-1 bg-white"
-                        >
-                          {isDeletingCategory ? (
-                            <div className="flex items-center">
-                              <ReactLoading type="spin" color="#ff" height={24} width={24} />
-                              <span className="ml-2">Deleting...</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center">
-                              <Trash className="w-4 h-4 mr-2 text-red-500" />
-                              <span>Delete the category</span>
-                            </div>
-                          )}
-                        </Button>
-                        )}
                         <div className="border-t border-white/10 dark:border-darkmode-400 mt-6 pt-6 text-white">
                             {categories.map(category=>{
                                 const isActive = activeCategory && category.id === activeCategory.id;
                                 return (
-                                    <Button
-                                        key={category.name}
-                                        onClick={() => setActiveCategory(category)}
-                                        className={`flex items-center px-3 py-2 rounded-md mt-2 ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
-                                    >
-                                        <Blocks className='w-4 h-4 mr-2' />
-                                        {category.name}
-                                    </Button>
+                                    <div key={category.id} onClick={() => setActiveCategory(category)}>
+                                        <div
+                                            className={`cursor-pointer flex items-center ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
+                                            >
+                                            <Button
+                                                key={category.name}
+                                                className={`flex items-center px-3 py-2 rounded-md mt-2`}
+                                            >
+                                                <Blocks className='w-4 h-4 mr-2' />
+                                                {category.name}
+                                            </Button>
+                                        </div>
+                                        
+                                        <div
+                                            className={`cursor-pointer flex items-center p-2 ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
+                                            >
+                                            <Button onClick={(event) => handleDuplicateCategoryClick(event, category.id)} className={`btn btn-warning w-full rounded-full text-sm `}>
+                                                <Copy className='w-4 h-4'/>
+                                            </Button>&nbsp;
+                                            { activeCategory && (
+                                            <Link 
+                                                href={route('remarketings.categories.edit', category.id)}
+                                                className={`btn btn-danger w-full rounded-full text-sm`}>
+
+                                                <Edit2 className='w-4 h-4'/>
+                                            </Link>)}&nbsp;
+                                            { activeCategory && (
+                                            <Button
+                                                onClick={(event) => handleDeleteCategoryClick(event, category.id)}
+                                                className={`btn btn-danger w-full rounded-full text-sm`}>
+
+                                                <Trash className='w-4 h-4'/>
+                                            </Button>)}
+                                        </div>
+                                    </div>
                                 );
                             })}
                         </div>
@@ -271,6 +330,9 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
                                     </td>
                                     <td className="table-report__action w-56">
                                         <div className="flex justify-center items-center">
+                                            <Button className="flex items-center text-warning mr-3" onClick={(event) => handleDuplicateRemarketingClick(event, remarketing.id)}>
+                                                <Copy className="w-4 h-4 mr-1" /> Duplicate
+                                            </Button>
                                             <Link className="flex items-center mr-3" href={route('remarketings.edit', { remarketing: remarketing.id })}>
                                                 <CheckSquare className="w-4 h-4 mr-1"/> Edit
                                             </Link>
@@ -287,6 +349,26 @@ const RemarketingsIndex: React.FC<PageProps<{ categories: RemarketingsCategory[]
                     <DeleteModal showDeleteModal={showDeleteRemarketingModal} handleDeleteCancel={handleDeleteCancel} handleDeleteConfirm={handleDeleteRemarketing} deleting={isDeletingRemarketing}/>
                     <DeleteModal showDeleteModal={showDeleteCategoryModal} handleDeleteCancel={handleDeleteCancel} handleDeleteConfirm={handleDeleteCategory} deleting={isDeletingCategory}/>
 
+                    <ConfirmModal
+                        showConfirmModal={showDuplicateCategoryModal}
+                        handleConfirmCancel={handleDuplicateCancel}
+                        handleConfirmConfirm={handleDuplicateCategory}
+                        confirming={isDuplicatingCategory}
+                        title={`Are you sure you want to duplicate the category ?`}
+                        description={`This action will create a copy of the category . Any changes made to the duplicate will not affect the original category.`}
+                        icon = {<Copy className="w-16 h-16 mx-auto text-warning" />}
+                        color="bg-warning"
+                    />          
+                    <ConfirmModal
+                        showConfirmModal={showDuplicateRemarketingModal}
+                        handleConfirmCancel={handleDuplicateCancel}
+                        handleConfirmConfirm={handleDuplicateRemarketing}
+                        confirming={isDuplicatingRemarketing}
+                        title={`Are you sure you want to duplicate the template ?`}
+                        description={`This action will create a copy of the template . Any changes made to the duplicate will not affect the original category.`}
+                        icon = {<Copy className="w-16 h-16 mx-auto text-warning" />}
+                        color="bg-warning"
+                    />
                     <div className="p-5 flex flex-col sm:flex-row items-center text-center sm:text-left text-slate-500">
                         {!activeCategory && (<div>No category !</div>)}
                         {activeCategory && activeRemarketings.length>0 && (<div>{activeRemarketings?.length} of {activeRemarketings?.length} in {activeCategory?.name}</div>)}

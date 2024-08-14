@@ -7,7 +7,11 @@ use App\Models\Program;
 use App\Models\ProgramRecord;
 use App\Models\ProgramsGroup;
 use App\Models\TemplatesGroup;
+use App\Models\RemarketingMessage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProgramRequest;
 use App\Http\Requests\UpdateProgramRequest;
@@ -193,6 +197,37 @@ class ProgramController extends Controller
             return redirect()->route('programs.index')->with('success', 'Program updated successfully.');
         } else {
             return redirect()->back()->with('error', 'Program could not be updated.');
+        }
+    }
+
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(Program $program)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newProgram = $program->replicate();
+            $newProgram->name = $program->name . ' (Copy)';
+            $newProgram->created_at = now();
+            $newProgram->created_by = Auth::id();
+            $newProgram->updated_at = now();
+            $newProgram->updated_by = Auth::id();
+            $newProgram->save();
+
+            foreach ($program->records as $record) {
+                $newRecord = $record->replicate();
+                $newRecord->program_id = $newProgram->id;
+                $newRecord->save();
+            }
+
+            DB::commit();
+            return redirect()->route('programs.index')->with('success', 'Program duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating program: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the program.');
         }
     }
 

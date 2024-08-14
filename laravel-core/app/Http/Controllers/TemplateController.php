@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Template;
 use App\Models\TemplatesGroup;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTemplateRequest;
 use App\Http\Requests\UpdateTemplateRequest;
@@ -201,6 +204,31 @@ class TemplateController extends Controller
             return redirect()->route('templates.index')->with('success', 'Template updated successfully.');
         } else {
             return redirect()->back()->with('error', 'Template could not be updated.');
+        }
+    }
+
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(Template $template)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newTemplate = $template->replicate();
+            $newTemplate->name = $template->name . ' (Copy)';
+            $newTemplate->created_at = now();
+            $newTemplate->created_by = Auth::id();
+            $newTemplate->updated_at = now();
+            $newTemplate->updated_by = Auth::id();
+            $newTemplate->save();
+
+            DB::commit();
+            return redirect()->route('templates.index')->with('success', 'Template duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating template: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the template.');
         }
     }
 

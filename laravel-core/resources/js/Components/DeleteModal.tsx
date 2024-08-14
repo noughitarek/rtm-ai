@@ -33,7 +33,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({showDeleteModal, handleDeleteC
             onClick={handleDeleteConfirm}
             disabled={deleting}
           >
-            {deleting ? "Suppression en cours..." : "Supprimer"}
+            {deleting ? "Suppression en cours..." : "Delete"}
           </button>
         </div>
       </div>

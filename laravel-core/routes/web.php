@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/create', [TemplatesGroupController::class, 'store'])->name('store');
             Route::get('/{group}/edit', [TemplatesGroupController::class, 'edit'])->name('edit');
             Route::put('/{group}/update', [TemplatesGroupController::class, 'update'])->name('update');
+            Route::post('/{group}/duplicate', [TemplatesGroupController::class, 'duplicate'])->name('duplicate');
             Route::delete('/{group}/delete', [TemplatesGroupController::class, 'destroy'])->name('destroy');
         });
     
@@ -40,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/create', [TemplateController::class, 'store'])->name('store');
         Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
         Route::post('/{template}/update', [TemplateController::class, 'update'])->name('update');
+        Route::post('/{template}/duplicate', [TemplateController::class, 'duplicate'])->name('duplicate');
         Route::delete('/{template}/delete', [TemplateController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('programs')->name('programs.')->group(function() {
@@ -48,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/create', [ProgramsGroupController::class, 'store'])->name('store');
             Route::get('/{group}/edit', [ProgramsGroupController::class, 'edit'])->name('edit');
             Route::put('/{group}/update', [ProgramsGroupController::class, 'update'])->name('update');
+            Route::post('/{group}/duplicate', [ProgramsGroupController::class, 'duplicate'])->name('duplicate');
             Route::delete('/{group}/delete', [ProgramsGroupController::class, 'destroy'])->name('destroy');
         });
     
@@ -56,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/create', [ProgramController::class, 'store'])->name('store');
         Route::get('/{program}/edit', [ProgramController::class, 'edit'])->name('edit');
         Route::post('/{program}/update', [ProgramController::class, 'update'])->name('update');
+        Route::post('/{program}/duplicate', [ProgramController::class, 'duplicate'])->name('duplicate');
         Route::delete('/{program}/delete', [ProgramController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('remarketings')->name('remarketings.')->group(function() {
@@ -64,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/create', [RemarketingsCategoryController::class, 'store'])->name('store');
             Route::get('/{category}/edit', [RemarketingsCategoryController::class, 'edit'])->name('edit');
             Route::put('/{category}/update', [RemarketingsCategoryController::class, 'update'])->name('update');
+            Route::post('/{category}/duplicate', [RemarketingsCategoryController::class, 'duplicate'])->name('duplicate');
             Route::delete('/{category}/delete', [RemarketingsCategoryController::class, 'destroy'])->name('destroy');
         });
     
@@ -72,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/create', [RemarketingController::class, 'store'])->name('store');
         Route::get('/{remarketing}/edit', [RemarketingController::class, 'edit'])->name('edit');
         Route::post('/{remarketing}/update', [RemarketingController::class, 'update'])->name('update');
+        Route::post('/{remarketing}/duplicate', [RemarketingController::class, 'duplicate'])->name('duplicate');
         Route::delete('/{remarketing}/delete', [RemarketingController::class, 'destroy'])->name('destroy');
 
         Route::post('/{remarketing}/toggle-status', [RemarketingController::class, 'toggle_status'])->name('toggle.status');

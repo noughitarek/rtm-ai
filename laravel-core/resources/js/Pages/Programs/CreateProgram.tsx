@@ -240,6 +240,7 @@ const CreateProgram: React.FC<PageProps<{ groups: ProgramsGroup[], templates_gro
                                 </div>
                             </div>
                         ))}
+                        <Button className="btn btn-primary" onClick={moreRecords}>More records</Button>&nbsp;
                         {saveButton}
                     </Grid>
                 </Page>

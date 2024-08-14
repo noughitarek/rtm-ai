@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Program;
 use App\Models\Remarketing;
 use App\Models\FacebookPage;
 use App\Models\ProgramsGroup;
 use App\Models\TemplatesGroup;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\RemarketingsCategory;
 use Illuminate\Support\Facades\Auth;
@@ -143,6 +146,32 @@ class RemarketingController extends Controller
             return redirect()->route('remarketings.index')->with('success', 'Remarketing updated successfully.');
         } else {
             return redirect()->back()->with('error', 'Remarketing could not be updated.');
+        }
+    }
+
+    /**
+     * Duplicate the form for editing the specified resource.
+     */
+    public function duplicate(Remarketing $remarketing)
+    {
+        DB::beginTransaction();
+
+        try {
+            $newRemarketing = $remarketing->replicate();
+            $newRemarketing->name = $remarketing->name . ' (Copy)';
+            $newRemarketing->created_at = now();
+            $newRemarketing->created_by = Auth::id();
+            $newRemarketing->updated_at = now();
+            $newRemarketing->updated_by = Auth::id();
+            $newRemarketing->is_active = false;
+            $newRemarketing->save();
+
+            DB::commit();
+            return redirect()->route('remarketings.index')->with('success', 'Remarketing duplicated successfully.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error duplicating remarketing: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to duplicate the remarketing.');
         }
     }
 

@@ -3,27 +3,133 @@ import React, {useEffect, useState} from 'react';
 import { PageProps, ProgramsGroup, Program } from '@/types';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
-import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User } from 'lucide-react';
+import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, Copy, Edit2, Film, Hash, Headphones, Image, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import DeleteModal from '@/Components/DeleteModal';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import ReactLoading from 'react-loading';
 import { toast } from 'react-toastify';
+import ConfirmModal from '@/Components/ConfirmModal';
 
 const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, to:number, total:number }>> = ({ menu, auth, groups, from, to, total }) => {
+    
+    // Group delete modal
     const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
     const [isDeletingGroup, setIsDeletingGroup] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
+    const handleDeleteGroupClick = (event: React.MouseEvent<HTMLButtonElement>, group: number) => {
+        event.preventDefault();
+        groupForm.setData({ group: group });
+        setShowDeleteGroupModal(true);
+    };
+    const handleDeleteGroup = async () => {
+        setIsDeletingGroup(true);
+        try {
+            await groupForm.delete(route('programs.groups.destroy', { id: groupForm.data.group }));
+            toast.success('Group of programs has been deleted successfully');
+            router.get(route('programs.index'));
+        } catch(error) {
+            toast.error('Error deleting the group of programs');
+            console.error('Error details:', error);
+        } finally {
+            setIsDeletingGroup(false);
+            setShowDeleteGroupModal(false);
+        }
+    };
 
+    // Program delete modal
     const [showDeleteProgramModal, setShowDeleteProgramModal] = useState(false);
     const [isDeletingProgram, setIsDeletingProgram] = useState(false);
+    const handleDeleteProgramClick = (event: React.MouseEvent<HTMLButtonElement>, program: number) => {
+        event.preventDefault();
+        programForm.setData({ program: program });
+        setShowDeleteProgramModal(true);
+    };
+    const handleDeleteProgram = async () => {
+        setIsDeletingProgram(true);
+        try {
+            await programForm.delete(route('programs.destroy', { id: programForm.data.program }));
+            toast.success('Program has been deleted successfully');
+            router.get(route('programs.index'));
+        } catch(error) {
+            toast.error('Error deleting the program');
+            console.error('Error details:', error);
+        } finally {
+            setIsDeletingProgram(false);
+            setShowDeleteProgramModal(false);
+        }
+    };
 
+    // Group duplicate modal
+    const [showDuplicateGroupModal, setShowDuplicateGroupModal] = useState(false);
+    const [isDuplicatingGroup, setIsDuplicatingGroup] = useState(false);
+    const handleDuplicateGroupClick = (event: React.MouseEvent<HTMLButtonElement>, group: number) => {
+        event.preventDefault();
+        groupForm.setData({ group: group });
+        setShowDuplicateGroupModal(true);
+    };
+    const handleDuplicateGroup = async () => {
+        setIsDuplicatingGroup(true);
+        try {
+            await groupForm.post(route('programs.groups.duplicate', { id: groupForm.data.group }));
+            toast.success('Group of programs has been duplicated successfully');
+            router.get(route('programs.index'));
+        } catch(error) {
+            toast.error('Error duplicating the group of programs');
+            console.error('Error details:', error);
+        } finally {
+            setIsDuplicatingGroup(false);
+            setShowDuplicateGroupModal(false);
+        }
+    };
+
+    // Program duplicate modal
+    const [showDuplicateProgramModal, setShowDuplicateProgramModal] = useState(false);
+    const [isDuplicatingProgram, setIsDuplicatingProgram] = useState(false);
+    const handleDuplicateProgramClick = (event: React.MouseEvent<HTMLButtonElement>, program: number) => {
+        event.preventDefault();
+        programForm.setData({ program: program });
+        setShowDuplicateProgramModal(true);
+    };
+    const handleDuplicateProgram = async () => {
+        setIsDuplicatingProgram(true);
+        try {
+            await programForm.post(route('programs.duplicate', { id: programForm.data.program }));
+            toast.success('Programs has been duplicated successfully');
+            router.get(route('programs.index'));
+        } catch(error) {
+            toast.error('Error duplicating the program');
+            console.error('Error details:', error);
+        } finally {
+            setIsDuplicatingProgram(false);
+            setShowDuplicateProgramModal(false);
+        }
+    };
+
+    // searning 
+    const [activeGroup, setActiveGroup] = useState<ProgramsGroup | null>(groups.length > 0 ? groups[0] : null);
+    const [activePrograms, setActivePrograms] = useState<Program[]>(groups.length > 0 ? groups[0].programs : []);
+    const [isSearching, setIsSearching] = useState(false);
+    useEffect(()=>{
+        setActivePrograms(activeGroup ? activeGroup.programs: [])
+    }, [activeGroup])
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsSearching(event.target.value != "")
+        const programsToFilter = activeGroup ? activeGroup.programs : [];
+        const searchTerm = event.target.value.toLowerCase();
+        const filteredPrograms = programsToFilter.filter(item => 
+            (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+            (item.description && item.description.toLowerCase().includes(searchTerm)) ||
+            (item.created_by && item.created_by.name.toLowerCase().includes(searchTerm))
+        );
+        setActivePrograms(filteredPrograms)
+    };
+
+    // forms
     const programForm = useForm<{ program: number }>({ program: 0 });
     const groupForm = useForm<{ group: number }>({ group: 0 });
 
-    const [activeGroup, setActiveGroup] = useState<ProgramsGroup | null>(groups.length > 0 ? groups[0] : null);
-    const [activePrograms, setActivePrograms] = useState<Program[]>(groups.length > 0 ? groups[0].programs : []);
-
+    // format Time Difference function
     const formatTimeDifference = (timestamp: number) => {
         const now = Date.now();
         const difference = now - timestamp;
@@ -48,77 +154,25 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
         }
       };
     
+    // last activity
     const mostRecentActivity = activePrograms.length > 0
     ? activePrograms.reduce((latest, program) => 
         new Date(program.updated_at).getTime() > new Date(latest.updated_at).getTime() ? program : latest
     ) 
     : null;
-
     const lastActivityBy = mostRecentActivity ? mostRecentActivity.updated_by.name : "";
     const lastActivityAt = mostRecentActivity ? formatTimeDifference(new Date(mostRecentActivity.updated_at).getTime()): "";
 
-
-    const handleDeleteProgram = async () => {
-        setIsDeletingProgram(true);
-        try {
-            await programForm.delete(route('programs.destroy', { id: programForm.data.program }));
-            toast.success('Program has been deleted successfully');
-            router.get(route('programs.index'));
-        } catch(error) {
-            toast.error('Error deleting the program');
-            console.error('Error details:', error);
-        } finally {
-            setIsDeletingProgram(false);
-            setShowDeleteProgramModal(false);
-        }
-    };
-    const handleDeleteGroup = async () => {
-        setIsDeletingGroup(true);
-        try {
-            await groupForm.delete(route('programs.groups.destroy', { id: groupForm.data.group }));
-            toast.success('Group of programs has been deleted successfully');
-            router.get(route('programs.index'));
-        } catch(error) {
-            toast.error('Error deleting the group of programs');
-            console.error('Error details:', error);
-        } finally {
-            setIsDeletingGroup(false);
-            setShowDeleteGroupModal(false);
-        }
-    };
-
-    const handleDeleteGroupClick = (event: React.MouseEvent<HTMLButtonElement>, group: number) => {
-        event.preventDefault();
-        groupForm.setData({ group: group });
-        setShowDeleteGroupModal(true);
-    };
-
-    const handleDeleteProgramClick = (event: React.MouseEvent<HTMLButtonElement>, program: number) => {
-        event.preventDefault();
-        programForm.setData({ program: program });
-        setShowDeleteProgramModal(true);
-    };
-
+    // Modals cancel
     const handleDeleteCancel = () => {
         setShowDeleteGroupModal(false);
         setShowDeleteProgramModal(false);
     };
-
-    useEffect(()=>{
-        setActivePrograms(activeGroup ? activeGroup.programs: [])
-    }, [activeGroup])
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setIsSearching(event.target.value != "")
-        const programsToFilter = activeGroup ? activeGroup.programs : [];
-        const searchTerm = event.target.value.toLowerCase();
-        const filteredPrograms = programsToFilter.filter(item => 
-            (item.name && item.name.toLowerCase().includes(searchTerm)) ||
-            (item.description && item.description.toLowerCase().includes(searchTerm)) ||
-            (item.created_by && item.created_by.name.toLowerCase().includes(searchTerm))
-        );
-        setActivePrograms(filteredPrograms)
+    const handleDuplicateCancel = () => {
+        setShowDuplicateGroupModal(false);
+        setShowDuplicateProgramModal(false);
     };
+
     return (<>
         <Head title="Programs" />
         <Webmaster
@@ -134,42 +188,45 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
                         <Link href={route('programs.groups.create')} type="button" className="btn text-slate-600 dark:text-slate-300 w-full bg-white dark:bg-darkmode-300 dark:border-darkmode-300 mt-1">
                             <Blocks className="w-4 h-4 mr-2" /> Create a group
                         </Link>
-                        { activeGroup && (
-                            <Link href={route('programs.groups.edit', activeGroup.id)} className="btn text-slate-600 dark:text-slate-300 w-full bg-white dark:bg-darkmode-300 dark:border-darkmode-300 mt-1">
-                                <Edit2 className="w-4 h-4 mr-2 text-danger" /> Edit the group
-                            </Link>
-                        )}
-                        { activeGroup && (
-                        <Button 
-                          onClick={(event) => handleDeleteGroupClick(event, activeGroup.id)}
-                          disabled={isDeletingGroup} 
-                          className="btn text-slate-600 dark:text-slate-300 w-full dark:bg-darkmode-300 dark:border-darkmode-300 mt-1 bg-white"
-                        >
-                          {isDeletingGroup ? (
-                            <div className="flex items-center">
-                              <ReactLoading type="spin" color="#ff" height={24} width={24} />
-                              <span className="ml-2">Deleting...</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center">
-                              <Trash className="w-4 h-4 mr-2 text-red-500" />
-                              <span>Delete the group</span>
-                            </div>
-                          )}
-                        </Button>
-                        )}
                         <div className="border-t border-white/10 dark:border-darkmode-400 mt-6 pt-6 text-white">
                             {groups.map(group=>{
                                 const isActive = activeGroup && group.id === activeGroup.id;
                                 return (
-                                    <Button
-                                        key={group.name}
-                                        onClick={() => setActiveGroup(group)}
-                                        className={`flex items-center px-3 py-2 rounded-md mt-2 ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
-                                    >
-                                        <Blocks className='w-4 h-4 mr-2' />
-                                        {group.name}
-                                    </Button>
+                                    <div key={group.id} onClick={() => setActiveGroup(group)}>
+                                        <div
+                                            className={`cursor-pointer flex items-center ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
+                                            >
+                                            <Button
+                                                key={group.name}
+                                                className={`flex items-center px-3 py-2 rounded-md mt-2`}
+                                            >
+                                                <Blocks className='w-4 h-4 mr-2' />
+                                                {group.name}
+                                            </Button>
+                                        </div>
+                                        
+                                        <div
+                                            className={`cursor-pointer flex items-center p-2 ${isActive ? 'bg-white/10 dark:bg-darkmode-700 font-medium' : ''}`}
+                                            >
+                                            <Button onClick={(event) => handleDuplicateGroupClick(event, group.id)} className={`btn btn-warning w-full rounded-full text-sm `}>
+                                                <Copy className='w-4 h-4'/>
+                                            </Button>&nbsp;
+                                            { activeGroup && (
+                                            <Link 
+                                                href={route('programs.groups.edit', group.id)}
+                                                className={`btn btn-danger w-full rounded-full text-sm`}>
+
+                                                <Edit2 className='w-4 h-4'/>
+                                            </Link>)}&nbsp;
+                                            { activeGroup && (
+                                            <Button
+                                                onClick={(event) => handleDeleteGroupClick(event, group.id)}
+                                                className={`btn btn-danger w-full rounded-full text-sm`}>
+
+                                                <Trash className='w-4 h-4'/>
+                                            </Button>)}
+                                        </div>
+                                    </div>
                                 );
                             })}
                         </div>
@@ -258,6 +315,9 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
                                     </td>
                                     <td className="table-report__action w-56">
                                         <div className="flex justify-center items-center">
+                                            <Button className="flex items-center text-warning mr-3" onClick={(event) => handleDuplicateProgramClick(event, program.id)}>
+                                                <Copy className="w-4 h-4 mr-1" /> Duplicate
+                                            </Button>
                                             <Link className="flex items-center mr-3" href={route('programs.edit', { program: program.id })}>
                                                 <CheckSquare className="w-4 h-4 mr-1"/> Edit
                                             </Link>
@@ -273,6 +333,27 @@ const ProgramsIndex: React.FC<PageProps<{ groups: ProgramsGroup[], from:number, 
                     </div>
                     <DeleteModal showDeleteModal={showDeleteProgramModal} handleDeleteCancel={handleDeleteCancel} handleDeleteConfirm={handleDeleteProgram} deleting={isDeletingProgram}/>
                     <DeleteModal showDeleteModal={showDeleteGroupModal} handleDeleteCancel={handleDeleteCancel} handleDeleteConfirm={handleDeleteGroup} deleting={isDeletingGroup}/>
+                    
+                    <ConfirmModal
+                        showConfirmModal={showDuplicateGroupModal}
+                        handleConfirmCancel={handleDuplicateCancel}
+                        handleConfirmConfirm={handleDuplicateGroup}
+                        confirming={isDuplicatingGroup}
+                        title={`Are you sure you want to duplicate the group ?`}
+                        description={`This action will create a copy of the group . Any changes made to the duplicate will not affect the original group.`}
+                        icon = {<Copy className="w-16 h-16 mx-auto text-warning" />}
+                        color="bg-warning"
+                    />          
+                    <ConfirmModal
+                        showConfirmModal={showDuplicateProgramModal}
+                        handleConfirmCancel={handleDuplicateCancel}
+                        handleConfirmConfirm={handleDuplicateProgram}
+                        confirming={isDuplicatingProgram}
+                        title={`Are you sure you want to duplicate the program ?`}
+                        description={`This action will create a copy of the program . Any changes made to the duplicate will not affect the original group.`}
+                        icon = {<Copy className="w-16 h-16 mx-auto text-warning" />}
+                        color="bg-warning"
+                    />
 
                     <div className="p-5 flex flex-col sm:flex-row items-center text-center sm:text-left text-slate-500">
                         {!activeGroup && (<div>No group !</div>)}
